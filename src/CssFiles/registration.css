@@ -1,0 +1,119 @@
+.registeration {
+  flex-direction: column;
+  justify-content: center;
+  width: 60%;
+}
+
+.registerationMain {
+  display: flex;
+  padding: 2%;
+  border: 3px solid rgb(158, 157, 157, 0.4);
+  box-shadow: 0 19px 38px rgba(0, 0, 0, 0.3), 0 15px 12px rgba(0, 0, 0, 0.22);
+  flex-direction: row;
+  justify-content: center;
+  border-radius: 20px;
+}
+
+.row {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+.logo {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.nameTexts {
+  width: 48%;
+}
+
+.email {
+  width: 100%;
+}
+
+.password{
+  width: 48%;
+}
+@media (max-width: 1200px) {
+  .registerationMain {
+    display: flex;
+    width: 100%;
+    max-width: 800px;
+    padding: 2%;
+    border: 3px solid rgb(158, 157, 157, 0.4);
+    box-shadow: 0 19px 38px rgba(0, 0, 0, 0.3), 0 15px 12px rgba(0, 0, 0, 0.22);
+    flex-direction: row;
+    justify-content: center;
+  }
+  .registeration {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    max-width: 600px;
+    padding: 0%;
+    border: none;
+  }
+  .row {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+  .logo {
+    display: none;
+    visibility: hidden;
+  }
+  .nameTexts {
+    max-width: 600px;
+    padding-left: 0%;
+    width: 100%;
+  }
+ 
+  .email {
+    max-width: 600px;
+    width: 100%;
+  }
+
+  .password{
+    max-width: 600px;
+    padding-left: 0%;
+    width: 100%;
+  }
+}
+@media (max-width: 900px) {
+  .registerationMain {
+    padding: 4%;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+  .registeration {
+    width: 100%;
+  }
+  .row {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+  .logo {
+    display: none;
+    width: 0vw;
+  }
+  .nameTexts {
+    width: 100%;
+    padding-left: 0%;
+  }
+  
+  .password{
+    padding-left: 0%;
+    width: 100%;
+  }
+  .email {
+    max-width: 600px;
+    padding-left: 0%;
+    width: 100%;
+  }
+}
