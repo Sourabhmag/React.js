@@ -1,0 +1,17 @@
+.main{
+    border: 3px solid rgb(158, 157, 157, 0.4);
+   
+}
+.takeNote{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+   
+    /* box-shadow: 0 19px 38px rgba(0, 0, 0, 0.3), 0 15px 12px rgba(0, 0, 0, 0.22); */
+   
+}
+
+.inputBase{
+    margin-left: 3%;
+    padding-top: 2%;
+}

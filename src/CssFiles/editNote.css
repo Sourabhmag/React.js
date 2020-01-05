@@ -1,0 +1,35 @@
+.editNote{
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    text-align: start;
+    flex-direction: column;
+    padding: 10px;
+    width: 600px;
+    min-height: 175px;
+   
+}
+
+.pinEditNote{
+    display: flex;
+    widows: 600px;
+    justify-content: space-between;
+    flex-direction: row;
+   
+}
+.titleAndDesc{
+    
+}
+.buttonsPaperEditNote{
+    display: flex;
+    justify-content: space-between;
+    flex-direction: row;
+    align-items: flex-end;
+    text-align: right;
+    width: 575px;
+}
+.buttonsEditNote{
+    display: flex;
+    justify-content: space-between;
+    width: 300px;
+}

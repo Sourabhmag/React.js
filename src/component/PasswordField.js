@@ -29,7 +29,7 @@ class PasswordField extends Component {
           onChange={this.props.handleChange}
           className="textBox"
           margin="dense"
-          style={{paddingBottom:"5%",width:"100%"}}
+          style={{width:"100%"}}
           InputProps={{
             endAdornment: (
               <InputAdornment position="end">

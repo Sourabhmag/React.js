@@ -1,0 +1,31 @@
+.noteService{
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    text-align: start;
+    flex-direction: column;
+    padding: 10px;
+    width: 210px;
+    min-height: 130px;
+    border: black 20px;
+}
+
+.pin{
+    display: flex;
+    width:200px;
+    justify-content: space-between;
+    flex-direction: row;
+   
+}
+.titleAndDesc{
+    
+}
+.buttonsPaperNoteService{
+    display: flex;
+    justify-content: space-between;
+
+}
+.buttonsNoteService{
+    display: flex;
+    justify-content: center;
+}

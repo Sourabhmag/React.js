@@ -1,0 +1,24 @@
+.mainDialog{
+    display: flex;
+    justify-content: space-around;
+    flex-direction: column;
+    min-width: 500px;
+    min-height: 250px;
+}
+.profilepic{
+    display: flex;
+    justify-content: center;
+    flex-direction: row;
+}
+
+.SelectText{
+    display: flex;
+    justify-content: center;
+    flex-direction: row;
+}
+
+.buttonsOfDialogBox{
+    display: flex;
+    justify-content: space-evenly;
+    flex-direction: row;
+}

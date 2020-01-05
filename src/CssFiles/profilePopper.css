@@ -1,0 +1,9 @@
+.profilePopper{
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    /* padding: 1.5% 3%; */
+    text-align: center;
+    
+   
+}

@@ -1,0 +1,32 @@
+.headPaper{
+   
+    width: 100%;
+    
+}
+.title{
+display: flex;
+justify-content: space-between;
+text-align: start;
+border-radius: 0;
+border: none;
+border-radius: 0vw;
+}
+.note{
+    display: flex;
+    justify-content: start;
+    flex-direction: row;
+    text-align: start;
+}
+
+.buttonsPaper{
+    display: flex;
+    justify-content: space-between;
+    flex-direction: row;
+}
+
+.buttons{
+    display: flex;
+    justify-content: space-evenly;
+    flex-direction: row;
+    width: 80%;
+}

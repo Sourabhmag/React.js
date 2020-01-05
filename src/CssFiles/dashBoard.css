@@ -1,0 +1,80 @@
+.dashboard{
+  display: flex;
+  justify-content: flex-start;
+  flex-direction: column;
+  width: fit-content;
+}
+
+.appbar{
+  display: flex;
+  justify-content: space-between;
+  flex-direction: row;
+  background-color: rgb(46, 42, 42);
+  color:white;
+}
+.takeNoteInDashboard{
+  /* margin-top: 25%; */
+}
+.searchDiv{
+  display: flex;
+  justify-content: space-between;
+  flex-direction: row;
+  color: white;
+  background-color: white;
+  border-radius: 8px;
+  
+}
+.searchBar{
+  border-radius: 8px;
+  
+  
+  display: flex;
+  justify-content: center;
+  flex-direction: row;
+  background-color: white;
+ 
+}
+.keep{
+  display: flex;
+  justify-content:center;
+  font-size: 133%;
+  margin-top: 23%;
+  margin-left: 40%;
+}
+.keepAndLogo{
+  display: flex;
+  justify-content: space-between;
+  flex-direction: row;
+}
+
+.profile{
+  display: flex;
+  justify-content: space-between;
+  flex-direction: row;
+}
+
+.takeNoteOfDashboard{
+  width: 500px;   
+  margin-left: 6.5em;
+  margin-top: -14.5em ;
+}
+
+.noteCards{
+  top: 10px;
+ width: 800px;
+  display: flex;
+  flex-wrap: wrap;
+  
+  flex-direction: row;
+  align-items: initial;
+  height: 75px;
+ 
+}
+@media(max-width:600px){
+  .searchBar{
+
+  }
+  .keep{
+    display:none;
+  }
+}

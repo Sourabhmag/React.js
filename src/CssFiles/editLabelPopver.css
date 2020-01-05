@@ -1,0 +1,13 @@
+.TextBox{
+    display: flex;
+    justify-content: center;
+    flex-direction: row;
+}
+
+.Done{
+    display: flex;
+    justify-content: flex-end;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    padding-right: 30px;
+}

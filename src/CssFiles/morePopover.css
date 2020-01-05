@@ -1,0 +1,7 @@
+.popover{
+    display: flex;
+    flex-direction: column;
+    justify-content: start;
+    text-align: start;
+   
+}

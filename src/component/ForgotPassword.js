@@ -1,7 +1,8 @@
 import React, { Component } from "react";
-import { Paper, Button } from "@material-ui/core";
+import {Button } from "@material-ui/core";
 import "../CssFiles/forgotPassword.css";
 import InField from "./InField";
+import { forgotPassword } from "./Service";
 const username = "Email";
 class ForgotPassword extends Component {
   constructor(props) {
@@ -11,8 +12,20 @@ class ForgotPassword extends Component {
       username: ""
     };
   }
+  handleCancel=()=>{
+    this.props.history.push("/")
+  }
   getData = event => {
-    alert(` ${this.state.username}`);
+
+    forgotPassword(this.state.username).then(Response=>{
+      console.log(Response);
+      
+     alert(`${Response.data.message}`)
+     this.props.history.push("/")
+    }).catch(err=>{console.log(`failed`);
+    })
+    
+    
   };
 
   getUsername = event => {
@@ -29,16 +42,16 @@ class ForgotPassword extends Component {
           <InField label={username} handleChange={this.getUsername} />
         </div>
         <div className="buttonAlignment">
-          <Button variant="contained" color="primary" onClick={this.getData}>
-            Submit
-          </Button>
           <Button
             variant="contained"
             color="secondary"
             className="leftPadding"
-            onClick
+            onClick={this.handleCancel}
           >
             Cancel
+          </Button>
+          <Button variant="contained" color="primary" onClick={this.getData}>
+            Submit
           </Button>
         </div>
       </div>
