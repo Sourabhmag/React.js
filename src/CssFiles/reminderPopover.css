@@ -1,0 +1,22 @@
+.main{
+display: flex;
+justify-content: center;
+flex-direction: column;
+min-width: 250px;
+padding: 10px;
+}
+
+.today{
+display: flex;
+justify-content: space-between;
+flex-direction: row;
+font-size: 100px;
+cursor: pointer;
+}
+
+.pickDateAndTime{
+    margin-top: 5px;
+    display: flex;
+    flex-direction: row;
+    cursor: pointer;
+}

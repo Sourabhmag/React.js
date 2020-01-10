@@ -19,6 +19,7 @@ import ArchiveOutlinedIcon from "@material-ui/icons/ArchiveOutlined";
 import EditOutlinedIcon from "@material-ui/icons/EditOutlined";
 import DeleteOutlinedIcon from "@material-ui/icons/DeleteOutlined";
 import { getLabels } from "./Service";
+import EditLabelPopover from "./EditLabelPopover";
 
 const drawerWidth = 240;
 
@@ -26,20 +27,7 @@ const styles = theme => ({
   root: {
     display: "flex"
   },
-  //   appBar: {
-  //     transition: theme.transitions.create(["margin", "width"], {
-  //       easing: theme.transitions.easing.sharp,
-  //       duration: theme.transitions.duration.leavingScreen
-  //     })
-  //   },
-  //   appBarShift: {
-  //     width: `calc(100% - ${drawerWidth}px)`,
-  //     marginLeft: drawerWidth,
-  //     transition: theme.transitions.create(["margin", "width"], {
-  //       easing: theme.transitions.easing.easeOut,
-  //       duration: theme.transitions.duration.enteringScreen
-  //     })
-  //   },
+
   menuButton: {
     marginLeft: 0,
     marginRight: 0,
@@ -85,7 +73,8 @@ class PersistentDrawerLeft extends React.Component {
 
     this.state = {
       open: false,
-      labelArray: []
+      labelArray: [],
+      openEditLabel: false
     };
   }
 
@@ -97,13 +86,29 @@ class PersistentDrawerLeft extends React.Component {
     this.setState({ open: false });
   };
 
+  handleClickOpenEditLabel = () => {
+    this.setState({
+      openEditLabel: true
+    });
+  };
+
+  handleCloseEditLabel = value => {
+    this.setState({ openEditLabel: false });
+  };
+
   getAllLabels = () => {
     getLabels(localStorage.getItem("Token")).then(Response => {
       this.setState({
         labelArray: Response.data.data
       });
+      let array = this.state.labelArray.reverse();
+      this.setState({
+        labelArray: array
+      });
     });
   };
+
+ 
   UNSAFE_componentWillMount() {
     this.getAllLabels();
   }
@@ -165,25 +170,31 @@ class PersistentDrawerLeft extends React.Component {
                 </ListItem>
               </List>
               <Divider></Divider>
-              <Typography style={{ paddingTop: "6%",paddingRight:"65%" }}>
+              <Typography style={{ paddingTop: "6%", paddingRight: "65%" }}>
                 Labels
               </Typography>
               <List>
-                {this.state.labelArray.map(label => (
+                {this.state.labelArray.map(labelObject => (
                   <ListItem
                     button
-                    key="label"
+                    // key="label"
                     style={{
                       borderTopRightRadius: "20px",
-                      borderBottomRightRadius: "20px",
-
+                      borderBottomRightRadius: "20px"
                     }}
                   >
-                    <ListItemIcon>
-                      <LabelOutlinedIcon />
-                    </ListItemIcon>
-                    <ListItemText primary={label.title} />
-                   
+                    <div
+                      style={{
+                        display: "flex",
+                        flexDirection: "row"
+                      }}
+                      onClick={()=>this.props.handelLabelsClick(labelObject)}
+                    >
+                      <ListItemIcon style={{ paddingTop: 3 }}>
+                        <LabelOutlinedIcon />
+                      </ListItemIcon>
+                      <ListItemText primary={labelObject.title} />
+                    </div>
                   </ListItem>
                 ))}
 
@@ -194,10 +205,28 @@ class PersistentDrawerLeft extends React.Component {
                     borderBottomRightRadius: "20px"
                   }}
                 >
-                  <ListItemIcon>
-                    <EditOutlinedIcon />
-                  </ListItemIcon>
-                  <ListItemText primary="Edit label" />
+                  <div
+                    style={{
+                      display: "flex",
+                      flexDirection: "row"
+                    }}
+                    onClick={this.handleClickOpenEditLabel}
+                  >
+                    <ListItemIcon style={{ paddingTop: 4 }}>
+                      <EditOutlinedIcon />
+                    </ListItemIcon>
+                    <ListItemText primary="Edit label" />
+                  </div>
+
+                  {this.state.openEditLabel ? (
+                    <div>
+                      <EditLabelPopover
+                        getAllLabels={this.getAllLabels}
+                        open={this.state.openEditLabel}
+                        onClose={this.handleCloseEditLabel}
+                      />
+                    </div>
+                  ) : null}
                 </ListItem>
               </List>
               <Divider></Divider>

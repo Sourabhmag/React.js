@@ -142,6 +142,69 @@ export function addColor(color, noteId, token) {
   );
 }
 
+export function addReminder(date, noteId, token) {
+  return axios.get(
+    `http://localhost:8082/note/addReminder`,
+    {
+      params: {
+        date: date,
+        noteId: noteId
+      },
+      headers: {
+        "Content-Type": "application/json;charset=utf-8",
+        token: token
+      }
+    }
+  );
+}
+
+export function deleteReminder(noteId, token) {
+  return axios.get(
+    `http://localhost:8082/note/deleteReminder`,
+    {
+      params: {
+        noteId: noteId
+      },
+      headers: {
+        "Content-Type": "application/json;charset=utf-8",
+        token: token
+      }
+    }
+  );
+}
+
+export function addColaborator(noteId,userName, token) {
+  return axios.get(
+    `http://localhost:8082/note/addColaborator`,
+    {
+      params: {
+        noteId: noteId,
+        userName:userName
+      },
+      headers: {
+        "Content-Type": "application/json;charset=utf-8",
+        token: token
+      }
+    }
+  );
+}
+
+export function removeColaborator(noteId,userName, token) {
+  return axios.get(
+    `http://localhost:8082/note/removeColaborator`,
+    {
+      params: {
+        noteId: noteId,
+        userName:userName
+      },
+      headers: {
+        "Content-Type": "application/json;charset=utf-8",
+        token: token
+      }
+    }
+  );
+}
+
 export function uploadImage(token, file) {
   return axios.post(`http://localhost:8081/user/uploadImg`, file, {
     headers: {
@@ -174,15 +237,12 @@ export function deleteLabel(labelId, token) {
   console.log(labelId);
   console.log(token);
 
-  return axios.delete(
-    `http://localhost:8082/label/delete?labelId=${labelId}`,
-    {
-      headers: {
-        "Content-Type": "application/json;charset=utf-8",
-        token: token
-      }
+  return axios.delete(`http://localhost:8082/label/delete?labelId=${labelId}`, {
+    headers: {
+      "Content-Type": "application/json;charset=utf-8",
+      token: token
     }
-  );
+  });
 }
 
 export function updateLabel(labelId, label, token) {
@@ -234,6 +294,9 @@ export function deleteNoteFromLabel(noteId, labelId, token) {
 }
 
 export function getNoteByLabelId(labelId, token) {
+  console.log(labelId);
+  console.log(token);
+
   return axios.post(
     "http://localhost:8082/label/getNotes",
     {},

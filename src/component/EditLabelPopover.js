@@ -2,21 +2,13 @@ import React from "react";
 import { withStyles } from "@material-ui/core/styles";
 import Button from "@material-ui/core/Button";
 import Dialog from "@material-ui/core/Dialog";
-import blue from "@material-ui/core/colors/blue";
 import { getLabels, addLabel } from "./Service";
-import { TextField, Divider, Typography } from "@material-ui/core";
+import { TextField, Divider, Typography, Paper } from "@material-ui/core";
 import AddOutlinedIcon from "@material-ui/icons/AddOutlined";
 import CheckOutlinedIcon from "@material-ui/icons/CheckOutlined";
 import "../CssFiles/editLabelPopver.css";
 import LabelList from "./LabelList";
 
-const emails = ["username@gmail.com", "user02@gmail.com"];
-const styles = {
-  avatar: {
-    backgroundColor: blue[100],
-    color: blue[600]
-  }
-};
 const OverridedButton = withStyles({
   root: {
     paddingRight: "2.2pc"
@@ -31,17 +23,22 @@ class SimpleDialog extends React.Component {
       deleteOrLabel: true,
       isDelete: false,
       title: "",
-      labelObj:{}
+      labelObj: {}
     };
   }
   addLabel = () => {
     let label = this.state.labelObj;
     label.title = this.state.title;
+    this.setState({
+      title:""
+    })
     let token = localStorage.getItem("Token");
     addLabel(label, token).then(Response => {
       console.log(Response);
       this.getAllLabels();
+      this.props.getAllLabels();
     });
+    
   };
   handleLabelChange = event => {
     this.setState({
@@ -58,8 +55,16 @@ class SimpleDialog extends React.Component {
 
   getAllLabels = () => {
     getLabels(localStorage.getItem("Token")).then(Response => {
+      console.log(Response.data.data);
+
       this.setState({
         labelArray: Response.data.data
+      });
+      let array = this.state.labelArray.reverse();
+      console.log(array);
+
+      this.setState({
+        labelArray: array
       });
     });
   };
@@ -75,10 +80,15 @@ class SimpleDialog extends React.Component {
         onClose={this.handleClose}
         aria-labelledby="simple-dialog-title"
         {...other}
+       style={{maxHeight:"600px"}}
       >
+        <Typography style={{ fontWeight: "bold" }} className="AddLabelText">
+          Add Label
+        </Typography>
+
         <div className="TextBox">
           <div>
-            <OverridedButton>
+            <OverridedButton style={{marginLeft:"7px"}}>
               <AddOutlinedIcon />
             </OverridedButton>
           </div>
@@ -91,53 +101,21 @@ class SimpleDialog extends React.Component {
             </Button>
           </div>
         </div>
-        {this.state.labelArray !== null && this.state.labelArray !== undefined 
-        && this.state.labelArray.map(label => (
-          <LabelList labelName={label} getAllLabels = {this.getAllLabels}/>
-        ))}
-        <Divider/>
-        <Typography className="Done" onClick={this.handleClose}>Done</Typography>
+        {this.state.labelArray !== null &&
+          this.state.labelArray !== undefined ?
+          this.state.labelArray.map(label => (
+            <LabelList
+              labelName={label}
+              getAllLabels={this.getAllLabels}
+              drowerLabels={this.props.getAllLabels}
+            />
+          )) : null}
+        <Divider />
+        <Typography className="Done" onClick={this.handleClose}>
+          Done
+        </Typography>
       </Dialog>
     );
   }
 }
-
-const SimpleDialogWrapped = withStyles(styles)(SimpleDialog);
-
-class SimpleDialogDemo extends React.Component {
-  state = {
-    open: false,
-    selectedValue: emails[1]
-  };
-
-  handleClickOpen = () => {
-    this.setState({
-      open: true
-    });
-  };
-
-  handleClose = value => {
-    this.setState({ selectedValue: value, open: false });
-  };
-
-  render() {
-    return (
-      <div>
-        <Button
-          variant="outlined"
-          color="primary"
-          onClick={this.handleClickOpen}
-        >
-          Open simple dialog
-        </Button>
-        <SimpleDialogWrapped
-          selectedValue={this.state.selectedValue}
-          open={this.state.open}
-          onClose={this.handleClose}
-        />
-      </div>
-    );
-  }
-}
-
-export default SimpleDialogDemo;
+export default SimpleDialog;

@@ -51,18 +51,17 @@ class Appbar extends Component {
       () => {
         this.searchAllNotes();
         console.log(this.state.searchKey);
-        
       }
     );
   };
-handleSearchClick = () =>{
-  console.log("in handleSearchClick");
-  
-  this.props.props.history.push({
-    pathname: "/dashboard/search",
-    state: { searchArray: this.state.searchArray }
-  });
-}
+  handleSearchClick = () => {
+    console.log("in handleSearchClick");
+
+    this.props.props.history.push({
+      pathname: "/dashboard/search",
+      state: { searchArray: this.state.searchArray }
+    });
+  };
   render() {
     return (
       <div className="dashboard">
@@ -70,13 +69,27 @@ handleSearchClick = () =>{
           <Toolbar className="appbar">
             <div className="keepAndLogo">
               <div>
-                <PersistantDrawer
-                  array={this.props.array}
-                  handelNoteClick={this.props.handelNoteClick}
-                  handelReminderClick={this.props.handelArchiveClick}
-                  handelArchiveClick={this.props.handelArchiveClick}
-                  handelTrashClick={this.props.handelTrashClick}
-                />
+                {!this.state.grid ? (
+                  <PersistantDrawer
+                    array={this.props.array}
+                    handelNoteClick={this.props.handelNoteClick}
+                    handelReminderClick={this.props.handelReminderClick}
+                    handelArchiveClick={this.props.handelArchiveClick}
+                    handelTrashClick={this.props.handelTrashClick}
+                    handelLabelsClick={this.props.handelLabelsClick}
+                    props={this.props}
+                  />
+                ) : (
+                  <PersistantDrawer
+                    array={this.props.array}
+                    handelNoteClick={this.props.handelNoteClick}
+                    handelReminderClick={this.props.handelReminderClick}
+                    handelArchiveClick={this.props.handelArchiveClick}
+                    handelTrashClick={this.props.handelTrashClick}
+                    handelLabelsClick={this.props.handelLabelsClick}
+                    props={this.props}
+                  />
+                )}
               </div>
 
               <div className="logo">
@@ -88,8 +101,12 @@ handleSearchClick = () =>{
             </div>
             <div className="searchDiv">
               <div className="logo">
-                <IconButton onClick={this.handleSearchClick} color="black" aria-label="Open drawer">
-                  <SearchIcon/>
+                <IconButton
+                  onClick={this.handleSearchClick}
+                  color="black"
+                  aria-label="Open drawer"
+                >
+                  <SearchIcon />
                 </IconButton>
               </div>
               <div className="searchBar">

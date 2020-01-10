@@ -4,7 +4,6 @@ import {
   ListItem,
   ListItemIcon,
   ListItemText,
-  Button,
   InputBase
 } from "@material-ui/core";
 import LabelIcon from "@material-ui/icons/Label";
@@ -14,17 +13,6 @@ import CheckOutlinedIcon from "@material-ui/icons/CheckOutlined";
 import { withStyles } from "@material-ui/styles";
 import { updateLabel, deleteLabel } from "./Service";
 
-const OverridedEditIcon = withStyles({
-  root: {
-    paddingLeft: "23px"
-  }
-})(EditIcon);
-
-const OverridedCheckOutlinedIcon = withStyles({
-  root: {
-    paddingLeft: "23px"
-  }
-})(CheckOutlinedIcon);
 class LabelList extends Component {
   constructor(props) {
     super(props);
@@ -34,7 +22,8 @@ class LabelList extends Component {
       editLabel: true,
       labelChange: "",
       labelObj: {},
-      title:""
+      title: "",
+      labelTitle:this.props.labelName.title
     };
   }
 
@@ -71,20 +60,21 @@ class LabelList extends Component {
         updateLabel(labelId, label, token).then(Response => {
           console.log(Response);
           this.props.getAllLabels();
+          this.props.drowerLabels();
         });
       }
     );
   };
   handleDelete = () => {
     console.log(this.props.labelName.title);
-    
-    deleteLabel(
-      this.props.labelName.id,
-      localStorage.getItem("Token")
-    ).then(Response => {
-      console.log(Response);
-      this.props.getAllLabels();
-    });
+
+    deleteLabel(this.props.labelName.id, localStorage.getItem("Token")).then(
+      Response => {
+        console.log(Response);
+        this.props.getAllLabels();
+        this.props.drowerLabels();
+      }
+    );
   };
   handleChangeLabel = event => {
     this.setState({
@@ -92,6 +82,8 @@ class LabelList extends Component {
     });
   };
   render() {
+    console.log(this.props.labelName.title);
+
     return (
       <div>
         <List
@@ -120,13 +112,11 @@ class LabelList extends Component {
               />
             </ListItemText>
 
-            <ListItemIcon style={{}}>
+            <ListItemIcon style={{ marginRight: -27 }}>
               {this.state.editLabel ? (
-                <OverridedEditIcon />
+                <EditIcon />
               ) : (
-                <OverridedCheckOutlinedIcon
-                  onClick={this.handleEditLabelDone}
-                />
+                <CheckOutlinedIcon onClick={this.handleEditLabelDone} />
               )}
             </ListItemIcon>
           </ListItem>

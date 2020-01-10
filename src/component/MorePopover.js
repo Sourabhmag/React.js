@@ -9,7 +9,7 @@ import "../CssFiles/morePopover.css";
 import { trash, getLabels, addLabel, assignNoteToLabel } from "./Service";
 import { TextField, Checkbox, Button } from "@material-ui/core";
 import AddIcon from "@material-ui/icons/Add";
-import { relative } from "path";
+import CheckLabel from "./CheckLabel";
 
 const OverRidedIconButton = withStyles({
   root: {
@@ -47,8 +47,9 @@ class SimplePopover extends React.Component {
       labelArray: [],
       title: "",
       labelObj: {},
-      checkedF: true
+      isCheckedF: false
     };
+    this.moreButtonRef = React.createRef();
   }
 
   handleMoreClick = event => {
@@ -91,7 +92,7 @@ class SimplePopover extends React.Component {
   };
   UNSAFE_componentWillMount() {
     this.getAllLabels();
-    console.log(this.props.note);
+    // console.log(this.props.note);
   }
   handleLabelChange = event => {
     this.setState({
@@ -104,19 +105,39 @@ class SimplePopover extends React.Component {
     label.title = this.state.title;
     let token = localStorage.getItem("Token");
 
-    addLabel(label, token).then(Response => {});
-    this.handleClose();
+    addLabel(label, token).then(Response => {
+      console.log(Response.data);
+      this.setState({
+        title: ""
+      });
+      this.getAllLabels();
+      this.assignNoteToLabel(Response.data.data);
+      this.handleClose();
+    });
   };
 
   handleChange = name => (event, id) => {
     // this.setState({ [name]: event.target.checked });
   };
 
-  assignNoteToLabel = () => {
+  assignNoteToLabel = labelId => {
     let noteId = this.props.note.id;
-    let labelId;
     let token = localStorage.getItem("Token");
-    assignNoteToLabel();
+    assignNoteToLabel(noteId, labelId, token).then(Response => {
+      console.log(Response.data);
+    });
+  };
+
+  handleIsChecked = label => {
+    // this.props.note.labelList.forEach(labelFromNote => {
+    //   if (labelFromNote.id === label.id) {
+    //     console.log(labelFromNote);
+        
+        // this.setState({
+        //   isCheckedF:true
+        // });
+    //   }
+    // });
   };
   render() {
     const { anchorElMorePopover } = this.state;
@@ -132,6 +153,7 @@ class SimplePopover extends React.Component {
           aria-owns={openMore ? "more-popper" : undefined}
           aria-haspopup="true"
           variant="contained"
+          ref={this.moreButtonRef}
           onClick={this.handleMoreClick}
         >
           <MoreVertOutlinedIcon />
@@ -185,7 +207,7 @@ class SimplePopover extends React.Component {
         <OverRidedPopover
           id="simple-popper"
           open={open}
-          anchorEl={anchorEl}
+          anchorEl={this.moreButtonRef.current}
           onClose={this.handleClose}
           anchorOrigin={{
             vertical: "bottom",
@@ -202,18 +224,19 @@ class SimplePopover extends React.Component {
             placeholder="Enter Label name"
             onChange={this.handleLabelChange}
           />
-          {this.state.labelArray.map(index => (
-            <div className="labelList">
-              <Checkbox
-                style={{ padding: 0, color: "gray" }}
-                checked={this.props.note}
-                onChange={this.handleChange(index.id)}
-              />
-              <Typography style={{ paddingLeft: 5, fontSize: 15 }}>
-                {index.title}
-              </Typography>
-            </div>
-          ))}
+          {this.state.labelArray.length !== 0
+            ? this.state.labelArray.map(
+                label => (
+                  this.handleIsChecked(label),
+                  (
+                    <CheckLabel
+                      label={label}
+                      isCheckedF={this.state.isCheckedF}
+                    />
+                  )
+                )
+              )
+            : null}
           {this.state.title !== "" ? (
             <Button onClick={this.handleCreateLabel}>
               <Typography>

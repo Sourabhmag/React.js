@@ -9,28 +9,16 @@ class Search extends Component {
     this.state = { array: [] };
   }
 
-  getAllNotes = () => {
-    console.log(this.props);
-    
-    console.log(this.props.location.state.searchArray);
-
-    this.setState({
-      array: this.props.location.state.searchArray
-    });
-  };
-
-  UNSAFE_componentWillMount() {
-    this.getAllNotes();
-  }
+  
   render() {
     return (
       <div style={{ display: "flex", justifyContent: "center" }}>
         <div className="noteCards">
-          {this.state.array.map((value, index) => (
+          {this.props.location.state.searchArray.map((value, index) => (
             <div style={{ padding: 7 }}>
               <NoteService
-                note={this.state.array[index]}
-                array={this.state.array}
+                note={this.props.location.state.searchArray[index]}
+                array={this.props.location.state.searchArray}
                 handleRefresh={this.handleRefresh}
               />
             </div>

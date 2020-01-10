@@ -1,31 +1,68 @@
-.noteService{
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    text-align: start;
-    flex-direction: column;
-    padding: 10px;
-    width: 210px;
-    min-height: 130px;
-    border: black 20px;
+.noteService {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  text-align: start;
+  flex-direction: column;
+  padding: 5px;
+  width: 225px;
+  min-height: 130px;
+  border: black 20px;
+}
+.noteServiceListView {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  text-align: start;
+  flex-direction: column;
+  padding: 5px;
+  width: 600px;
+  min-height: 130px;
+  border: black 20px;
+}
+.noteService :hover .buttonsNoteService {
+  display: flex;
+  visibility: visible;
 }
 
-.pin{
-    display: flex;
-    width:200px;
-    justify-content: space-between;
-    flex-direction: row;
-   
+.noteServiceListView :hover .buttonsNoteService {
+  display: flex;
+  visibility: visible;
 }
-.titleAndDesc{
-    
+.pin {
+  display: flex;
+  width: 210px;
+  justify-content: space-between;
+  flex-direction: row;
 }
-.buttonsPaperNoteService{
-    display: flex;
-    justify-content: space-between;
+.titleAndDesc {
+  width: 225px;
+}
+.buttonsPaperNoteService {
+  display: flex;
+  justify-content: center;
+  width: 225px;
+  flex-direction: row;
+}
+.buttonsNoteService {
+  display: flex;
+  justify-content: center;
+  visibility: hidden;
+  margin-top: 10px;
+  width: 210px;
+}
 
+.chips {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
 }
-.buttonsNoteService{
-    display: flex;
-    justify-content: center;
+
+.hoverChip:hover .clearButton {
+  display: block;
+  visibility: visible;
+}
+.clearButton {
+  display: none;
+  visibility: hidden;
 }

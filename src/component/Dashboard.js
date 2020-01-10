@@ -63,11 +63,6 @@ class Dashboard extends Component {
       labels: false,
       reminder: false
     });
-    // let trashArray = this.state.array.filter(note => note.trash === true);
-    // this.props.history.push({
-    //   pathname: "/dashboard/trash",
-    //   state: { array: trashArray }
-    // });
     this.props.history.push("/dashboard/trash");
   };
 
@@ -78,6 +73,21 @@ class Dashboard extends Component {
       trash: false,
       labels: false,
       reminder: true
+    });
+    this.props.history.push("/dashboard/reminder")
+  };
+
+  handelLabelsClick = labelObject => {
+    this.setState({
+      allnotes: false,
+      archive: false,
+      trash: false,
+      labels: true,
+      reminder: false
+    });
+    this.props.history.push({
+      pathname: "/dashboard/noteWithLabel/"+labelObject.title,
+      state: { labelObj: labelObject }
     });
   };
 
@@ -121,6 +131,7 @@ class Dashboard extends Component {
           handelReminderClick={this.handelReminderClick}
           handelArchiveClick={this.handelArchiveClick}
           handelTrashClick={this.handelTrashClick}
+          handelLabelsClick={this.handelLabelsClick}
         />
       </div>
     );
