@@ -1,5 +1,5 @@
-import React, { Component} from "react";
-import { Typography, Button} from "@material-ui/core";
+import React, { Component } from "react";
+import { Typography, Button } from "@material-ui/core";
 import "../CssFiles/login.css";
 import InField from "../component/InField";
 import PasswordField from "../component/PasswordField";
@@ -101,25 +101,29 @@ class Login extends Component {
       loginData.username = this.state.username;
       loginData.password = this.state.password;
       this.setState({
-        username:null,
-        password:null
+        username: null,
+        password: null
       });
-      LoginUser(loginData).then(Response => {
-        // console.log(Response);
+      LoginUser(loginData)
+        .then(Response => {
+          // console.log(Response);
 
-        alert(`${Response.data.message}`);
-        console.log(JSON.stringify(Response.data.data));
-        console.log(Response.data.data);
+          alert(`${Response.data.message}`);
+          console.log(JSON.stringify(Response.data.data));
+          console.log(Response.data.data);
 
-        localStorage.setItem("name", Response.data.data.user.name);
-        localStorage.setItem("email", Response.data.data.user.email);
-        localStorage.setItem("profilePic", Response.data.data.user.profilePic);
-        localStorage.setItem("Token", Response.data.data.token);
-        this.props.history.push("/dashboard/note");
-      }).catch((err)=>{
-        console.log('login failed',err);
-        
-      })
+          localStorage.setItem("name", Response.data.data.user.name);
+          localStorage.setItem("email", Response.data.data.user.email);
+          localStorage.setItem(
+            "profilePic",
+            Response.data.data.user.profilePic
+          );
+          localStorage.setItem("Token", Response.data.data.token);
+          this.props.history.push("/dashboard/note");
+        })
+        .catch(err => {
+          console.log("login failed", err);
+        });
     }
   };
   handleMouseDownPassword = event => {
@@ -127,76 +131,81 @@ class Login extends Component {
   };
   render() {
     return (
-      <div className="loginBox">
-        <div style={{ fontSize: "200%" }}>
-          <span style={{ color: "blue" }}>f</span>
-          <span style={{ color: "red" }}>u</span>
-          <span style={{ color: "orange" }}>n</span>
-          <span style={{ color: "blue" }}>d</span>
-          <span style={{ color: "green" }}>o</span>
-          <span style={{ color: "red" }}>o</span>
-        </div>
+      <div className="mainLoginBox">
+        <div className="loginBox">
+          <div style={{ fontSize: "200%" }}>
+            <span style={{ color: "blue" }}>f</span>
+            <span style={{ color: "red" }}>u</span>
+            <span style={{ color: "orange" }}>n</span>
+            <span style={{ color: "blue" }}>d</span>
+            <span style={{ color: "green" }}>o</span>
+            <span style={{ color: "red" }}>o</span>
+          </div>
 
-        <div className="signIn">
-          <span style={{ color: "Black" }}>Sign in</span>
-        </div>
+          <div className="signIn">
+            <span style={{ color: "Black" }}>Sign in</span>
+          </div>
 
-        <div>
-          <div className="username">
-            <InField label={username} handleChange={this.getUsername} />
+          <div>
+            <div className="username">
+              <InField label={username} handleChange={this.getUsername} />
+              <div
+                style={{
+                  fontSize: "90%",
+                  paddingRight: "40%",
+                  color: "red",
+                  paddingBottom: "5%"
+                }}
+              >
+                {this.state.usernameError}
+              </div>
+            </div>
+
+            <PasswordField
+              label={placeHolder}
+              handleChange={this.getPassword}
+            />
             <div
               style={{
                 fontSize: "90%",
-                paddingRight: "40%",
+                paddingRight: "42%",
                 color: "red",
                 paddingBottom: "5%"
               }}
             >
-              {this.state.usernameError}
+              {this.state.passwordError}
             </div>
           </div>
 
-          <PasswordField label={placeHolder} handleChange={this.getPassword} />
-          <div
-            style={{
-              fontSize: "90%",
-              paddingRight: "42%",
-              color: "red",
-              paddingBottom: "5%"
-            }}
-          >
-            {this.state.passwordError}
+          <div className="buttonAlignment">
+            <Button
+              variant="contained"
+              color="secondary"
+              className="leftPadding"
+              onClick={this.handleRegister}
+            >
+              Register
+            </Button>
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={this.getData}
+              style={{ width: "38%" }}
+            >
+              Login
+            </Button>
           </div>
-        </div>
 
-        <div className="buttonAlignment">
-          <Button
-            variant="contained"
-            color="secondary"
-            className="leftPadding"
-            onClick={this.handleRegister}
-          >
-            Register
-          </Button>
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={this.getData}
-            style={{ width: "38%" }}
-          >
-            Login
-          </Button>
+          <Typography className="link">
+            <Button
+              onClick={this.handleForgotPassword}
+              variant="inherit"
+              color="primary"
+            >
+              forgot Password?
+            </Button>
+          </Typography>
         </div>
-
-        <Typography className="link">
-          <Button
-            onClick={this.handleForgotPassword}
-            variant="inherit"
-            color="primary"
-          >
-            forgot Password?
-          </Button>
-        </Typography>
       </div>
     );
   }

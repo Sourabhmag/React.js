@@ -40,14 +40,14 @@ const styles = theme => ({
 class SimplePopover extends React.Component {
   constructor(props) {
     super(props);
-
     this.state = {
       anchorElMorePopover: null,
       anchorEl: null,
       labelArray: [],
       title: "",
       labelObj: {},
-      isCheckedF: false
+      isCheckedF: false,
+      labelArrayForNewNote: []
     };
     this.moreButtonRef = React.createRef();
   }
@@ -64,9 +64,8 @@ class SimplePopover extends React.Component {
     });
   };
   handleDeleteNote = () => {
-    console.log(this.props.history);
     trash(this.props.note.id, localStorage.getItem("Token")).then(Response => {
-      console.log("Response :", Response);
+      this.props.handleClickSnackbar("Note trashed");
       this.props.handleRefresh();
     });
     this.handleMoreClose();
@@ -90,10 +89,15 @@ class SimplePopover extends React.Component {
       });
     });
   };
-  UNSAFE_componentWillMount() {
+  componentDidMount() {
     this.getAllLabels();
     // console.log(this.props.note);
   }
+  // componentDidUpdate() {
+  //   if (this.props.note === undefined && this.props.note === null) {
+  //     console.log(this.props);
+  //   }
+  // }
   handleLabelChange = event => {
     this.setState({
       title: event.target.value
@@ -104,40 +108,67 @@ class SimplePopover extends React.Component {
     let label = this.state.labelObj;
     label.title = this.state.title;
     let token = localStorage.getItem("Token");
-
     addLabel(label, token).then(Response => {
-      console.log(Response.data);
       this.setState({
         title: ""
       });
+
+      if (!this.props.getLabelData) {
+        this.assignNoteToLabel(Response.data.data);
+      } else {
+        this.setState(
+          {
+            labelArrayForNewNote: this.props.labelArray
+          },
+          () => {
+            this.props.getLabelData(
+              this.state.labelArrayForNewNote.concat(Response.data.data)
+            );
+          }
+        );
+      }
       this.getAllLabels();
-      this.assignNoteToLabel(Response.data.data);
       this.handleClose();
     });
   };
 
-  handleChange = name => (event, id) => {
-    // this.setState({ [name]: event.target.checked });
-  };
+  assignNoteToLabel = label => {
+    if (this.props.note) {
+      let noteId = this.props.note.id;
+      let token = localStorage.getItem("Token");
+      assignNoteToLabel(noteId, label.id, token).then(Response => {
+        this.props.handleRefresh();
+      });
+    } else {
+      console.log(this.props.getLabelData);
 
-  assignNoteToLabel = labelId => {
-    let noteId = this.props.note.id;
-    let token = localStorage.getItem("Token");
-    assignNoteToLabel(noteId, labelId, token).then(Response => {
-      console.log(Response.data);
-    });
+      this.setState(
+        {
+          labelArrayForNewNote: this.props.labelArray
+        },
+        () => {
+          this.props.getLabelData(
+            this.state.labelArrayForNewNote.concat(label)
+          );
+        }
+      );
+    }
   };
 
   handleIsChecked = label => {
-    // this.props.note.labelList.forEach(labelFromNote => {
-    //   if (labelFromNote.id === label.id) {
-    //     console.log(labelFromNote);
-        
-        // this.setState({
-        //   isCheckedF:true
-        // });
-    //   }
-    // });
+    if (this.props.note !== null && this.props.note !== undefined) {
+      this.props.note.labelList.map(labelFromNote => {
+        if (labelFromNote.id === label.id) {
+          console.log("in if");
+          // this.setState({ isCheckedF: true });
+          return true;
+        }
+      });
+    } else {
+      console.log("in else");
+
+      return false;
+    }
   };
   render() {
     const { anchorElMorePopover } = this.state;
@@ -225,17 +256,16 @@ class SimplePopover extends React.Component {
             onChange={this.handleLabelChange}
           />
           {this.state.labelArray.length !== 0
-            ? this.state.labelArray.map(
-                label => (
-                  this.handleIsChecked(label),
-                  (
-                    <CheckLabel
-                      label={label}
-                      isCheckedF={this.state.isCheckedF}
-                    />
-                  )
-                )
-              )
+            ? this.state.labelArray.map(label => (
+                <CheckLabel
+                  label={label}
+                  assignNoteToLabel={this.assignNoteToLabel}
+                  note={this.props.note}
+                  handleRefresh={this.props.handleRefresh}
+                  labelArray={this.props.labelArray}
+                  getLabelData={this.props.getLabelData}
+                />
+              ))
             : null}
           {this.state.title !== "" ? (
             <Button onClick={this.handleCreateLabel}>

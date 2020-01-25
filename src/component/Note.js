@@ -1,10 +1,19 @@
 import React, { Component } from "react";
 import { addNote, getNotes } from "./Service";
-import { ClickAwayListener } from "@material-ui/core";
+import { ClickAwayListener, Typography } from "@material-ui/core";
 import TakeNote from "./TakeNote";
 import TakeNoteWithTitle from "./TakeNoteWithTitle";
 import NoteService from "./NoteService";
 import "../CssFiles/dashBoard.css";
+import { connect } from "react-redux";
+
+const mapStateToProps = state => {
+  return {
+    view: state.view,
+    drawerPosition: state.drawerPosition,
+    reminder: state.reminder
+  };
+};
 export class Note extends Component {
   constructor(props) {
     super(props);
@@ -13,84 +22,132 @@ export class Note extends Component {
       noteEditer: false,
       title: "",
       description: "",
+      colaborators: [],
+      pin: false,
+      color: "",
+      archive: false,
+      reminder: "",
+      labelList: [],
       newNote: {},
-      array: []
+      array: [],
+      pinArray: [],
+      isAnyPinned: false,
+      isGrid: false
     };
   }
   getTitle = event => {
-    this.setState(
-      {
-        title: event.target.value
-      },
-      () => {
-        console.log(this.state.title);
-      }
-    );
+    this.setState({
+      title: event.target.value
+    });
   };
 
   getDescription = event => {
     this.setState({
       description: event.target.value
     });
-    console.log(this.state.description);
+  };
+
+  setArrays = (trashArray, pinArray) => {
+    this.setState({
+      array: trashArray,
+      pinArray: pinArray
+    });
   };
   getAllNotes = () => {
-    console.log("in getAllNotes");
-
     getNotes(localStorage.getItem("Token")).then(Response => {
-      console.log(Response.data.data);
-      console.log(Response.data)
       let trashArray = Response.data.data.filter(
-        note => note.trash === false && note.archive === false
+        note =>
+          note.trash === false && note.archive === false && note.pin === false
       );
-      this.setState({
-        array: trashArray
-      });
+      let pinArray = Response.data.data.filter(
+        note =>
+          note.trash === false && note.archive === false && note.pin === true
+      );
+
+      this.setArrays(trashArray, pinArray);
+
+      if (this.state.pinArray.length === 0) {
+        this.setState({
+          isAnyPinned: false
+        });
+      } else {
+        this.setState({
+          isAnyPinned: true
+        });
+      }
     });
   };
 
-  UNSAFE_componentWillMount() {
+  componentDidMount() {
     this.getAllNotes();
   }
   handleClick = async () => {
-    console.log(this.state.noteEditer);
     await this.setState({ noteEditer: true });
   };
 
-  handleClickAway = () => {
-    console.log(this.state.noteEditer);
+  handleClickAway = (
+    pin,
+    color,
+    colaborator,
+    archive,
+    reminder,
+    labelArray
+  ) => {
     this.setState({ noteEditer: false });
+
     if (this.state.title !== "" || this.state.description !== "") {
       let newNote = this.state.newNote;
       let token = localStorage.getItem("Token");
       newNote.title = this.state.title;
       newNote.description = this.state.description;
+      newNote.pin = pin;
+      newNote.color = color;
+      newNote.colaborators = colaborator;
+      newNote.archive = archive;
+      newNote.reminder = reminder;
+      newNote.labelList = labelArray;
       addNote(newNote, token).then(Response => {
+        console.log(Response.data);
+
         this.setState({
           array: Response.data.data
         });
-        console.log(this.state.array);
       });
       this.setState({
         title: "",
-        description: ""
+        description: "",
+        colaborators: null,
+        pin: false,
+        color: "",
+        archive: false,
+        reminder: ""
       });
+      this.handleRefresh();
     }
   };
   handleRefresh = () => {
-    console.log("Call to handleRefresh");
+    console.log("in handleRefresh");
 
     this.getAllNotes();
   };
   render() {
-    console.log(this.props);
-
     return (
-      <div>
+      <div
+        style={{
+          marginLeft: this.props.drawerPosition ? "20%" : 0,
+          transition: "margin .20s linear"
+        }}
+      >
+        {/* onClickAway={this.handleClickAway} */}
         <div className="takeNoteInDashboard">
           {this.state.noteEditer ? (
-            <ClickAwayListener onClickAway={this.handleClickAway}>
-              <div className="takeNoteOfDashboard">
+            <ClickAwayListener>
+              <div
+                style={{
+                  marginTop: " 8.5em"
+                }}
+                className="takeNoteOfDashboard"
+              >
                 <TakeNoteWithTitle
                   title={this.getTitle}
                   description={this.getDescription}
@@ -99,25 +156,98 @@ export class Note extends Component {
               </div>
             </ClickAwayListener>
           ) : (
-            <div className="takeNoteOfDashboard">
-              <TakeNote
-                // openEditer={() => this.setState({ noteEditer: true })}
-                openEditer={this.handleClick}
-              />
+            <div
+              style={{
+                marginTop: "8.5em"
+              }}
+              className="takeNoteOfDashboard"
+            >
+              <TakeNote openEditer={this.handleClick} />
             </div>
           )}
         </div>
-        <div style={{ display: "flex", justifyContent: "center" }}>
-          <div className="noteCards">
-            {this.state.array.map((value, index) => (
-              <div style={{ padding: 7 }}>
-                <NoteService
-                  note={this.state.array[index]}
-                  array={this.state.array}
-                  handleRefresh={this.handleRefresh}
-                />
+        <div style={{ marginLeft: !this.props.view ? "8%" : 0 }}>
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "center"
+            }}
+          >
+            {this.state.isAnyPinned ? (
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "flex-start",
+
+                  flexDirection: "column",
+                  textAlign: "left"
+                }}
+              >
+                <div style={{ paddingLeft: 7, marginBottom: 10 }}>
+                  <Typography style={{ fontSize: 20 }}>PINNED</Typography>
+                </div>
+                <div
+                  className={this.props.view ? "noteCardsForList" : "noteCards"}
+                >
+                  {this.state.pinArray.map((value, index) => (
+                    <div style={{ padding: 7 }}>
+                      <NoteService
+                        note={this.state.pinArray[index]}
+                        array={this.state.pinArray}
+                        handleRefresh={this.handleRefresh}
+                        isGrid={this.state.isGrid}
+                      />
+                    </div>
+                  ))}
+                </div>
               </div>
-            ))}
+            ) : null}
+          </div>
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "center",
+              marginLeft: this.props.view ? "5%" : 0
+            }}
+          >
+            <div className="noteCards">
+              {this.state.isAnyPinned ? (
+                <div
+                  style={{
+                    display: "flex",
+                    justifyContent: "flex-start",
+                    marginTop: 20,
+                    flexDirection: "column",
+                    textAlign: "left",
+                    marginLeft: this.props.view ? "65px" : 0
+                  }}
+                >
+                  <div style={{ paddingLeft: 5, marginBottom: 5 }}>
+                    <Typography style={{ fontSize: 20 }}>OTHER</Typography>
+                  </div>
+                </div>
+              ) : null}
+            </div>
+          </div>
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "center",
+              marginLeft: this.props.view ? "15%" : 0
+            }}
+          >
+            <div className="noteCards">
+              {this.state.array.map((value, index) => (
+                <div style={{ padding: 7 }}>
+                  <NoteService
+                    note={this.state.array[index]}
+                    array={this.state.array}
+                    handleRefresh={this.handleRefresh}
+                    isGrid={this.state.isGrid}
+                  />
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       </div>
@@ -125,4 +255,4 @@ export class Note extends Component {
   }
 }
 
-export default Note;
+export default connect(mapStateToProps)(Note);

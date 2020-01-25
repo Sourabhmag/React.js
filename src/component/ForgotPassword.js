@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import {Button } from "@material-ui/core";
+import { Button } from "@material-ui/core";
 import "../CssFiles/forgotPassword.css";
 import InField from "./InField";
 import { forgotPassword } from "./Service";
@@ -12,20 +12,20 @@ class ForgotPassword extends Component {
       username: ""
     };
   }
-  handleCancel=()=>{
-    this.props.history.push("/")
-  }
+  handleCancel = () => {
+    this.props.history.push("/");
+  };
   getData = event => {
+    forgotPassword(this.state.username)
+      .then(Response => {
+        console.log(Response);
 
-    forgotPassword(this.state.username).then(Response=>{
-      console.log(Response);
-      
-     alert(`${Response.data.message}`)
-     this.props.history.push("/")
-    }).catch(err=>{console.log(`failed`);
-    })
-    
-    
+        alert(`${Response.data.message}`);
+        this.props.history.push("/");
+      })
+      .catch(err => {
+        console.log(`failed`);
+      });
   };
 
   getUsername = event => {
@@ -35,24 +35,26 @@ class ForgotPassword extends Component {
   };
   render() {
     return (
-      <div className="forgotBox">
-        <h2>Forgot Password</h2>
+      <div className="mainforgotBox">
+        <div className="forgotBox">
+          <h2>Forgot Password</h2>
 
-        <div>
-          <InField label={username} handleChange={this.getUsername} />
-        </div>
-        <div className="buttonAlignment">
-          <Button
-            variant="contained"
-            color="secondary"
-            className="leftPadding"
-            onClick={this.handleCancel}
-          >
-            Cancel
-          </Button>
-          <Button variant="contained" color="primary" onClick={this.getData}>
-            Submit
-          </Button>
+          <div>
+            <InField label={username} handleChange={this.getUsername} />
+          </div>
+          <div className="buttonAlignment">
+            <Button
+              variant="contained"
+              color="secondary"
+              className="leftPadding"
+              onClick={this.handleCancel}
+            >
+              Cancel
+            </Button>
+            <Button variant="contained" color="primary" onClick={this.getData}>
+              Submit
+            </Button>
+          </div>
         </div>
       </div>
     );

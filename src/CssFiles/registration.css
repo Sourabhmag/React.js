@@ -3,7 +3,11 @@
   justify-content: center;
   width: 60%;
 }
-
+.registerationOuter{
+  display: flex;
+  justify-content: center;
+  margin-top: 11vh;
+}
 .registerationMain {
   display: flex;
   padding: 0.5%;
@@ -12,6 +16,7 @@
   flex-direction: row;
   justify-content: center;
   border-radius: 20px;
+  width: 60%;
 }
 
 .row {

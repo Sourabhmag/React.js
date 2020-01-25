@@ -58,20 +58,19 @@ class PickColor extends Component {
     this.state = {};
   }
   handleColor = color => {
-    let noteId = this.props.note.id
-    let colorOfNote = color.colorCode 
-    let token = localStorage.getItem("Token")
-    console.log(colorOfNote);
-    console.log(noteId);
-    console.log(token);
-    addColor(colorOfNote,noteId,token).then(Response => {
-      console.log('kkkk',Response);
-      this.props.handleRefresh();
-    })
-    .catch((err)=>{
-      console.log('error',err);
-      
-    })
+   
+    let colorOfNote = color.colorCode;
+    let token = localStorage.getItem("Token");
+    if (this.props.note) {
+      let noteId = this.props.note.id;
+      addColor(colorOfNote, noteId, token)
+        .then(Response => {
+          this.props.handleRefresh();
+        })
+        .catch(err => {});
+    }else{
+      this.props.getColorData(colorOfNote);
+    }
   };
 
   render() {
@@ -82,28 +81,25 @@ class PickColor extends Component {
             width: 120,
             display: "flex",
             justifyContent: "row",
-            flexWrap: "wrap",
-           
+            flexWrap: "wrap"
           }}
         >
-          
-            {colorsPallete.map(color => {
-              return (
-                <Tooltip title={color.colorName}>
-                  <div
-                    onClick={() => this.handleColor(color)}
-                    style={{
-                      height: "30px",
-                      width: "30px",
-                      borderRadius: "50%",
-                      backgroundColor: color.colorCode,
-                      cursor: "pointer"
-                    }}
-                  ></div>
-                </Tooltip>
-              );
-            })}
-         
+          {colorsPallete.map(color => {
+            return (
+              <Tooltip title={color.colorName}>
+                <div
+                  onClick={() => this.handleColor(color)}
+                  style={{
+                    height: "30px",
+                    width: "30px",
+                    borderRadius: "50%",
+                    backgroundColor: color.colorCode,
+                    cursor: "pointer"
+                  }}
+                ></div>
+              </Tooltip>
+            );
+          })}
         </Paper>
       </div>
     );

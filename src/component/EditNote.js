@@ -33,7 +33,10 @@ export default class SimpleDialog extends React.Component {
         aria-labelledby="simple-dialog-title"
         open={this.props.open}
       >
-        <div className="editNote">
+        <div
+          style={{ backgroundColor: this.props.note.color }}
+          className="editNote"
+        >
           <div>
             <div className="pinEditNote">
               <div>

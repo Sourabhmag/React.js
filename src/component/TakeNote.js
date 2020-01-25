@@ -17,7 +17,6 @@ const styles = {
     border:"12px"
   },
   input: {
-    marginLeft: "2%",
     flex: 1
   },
   iconButton: {

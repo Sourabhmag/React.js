@@ -5,7 +5,13 @@ import { Paper, Typography, Tooltip } from "@material-ui/core";
 import DeleteForeverRoundedIcon from "@material-ui/icons/DeleteForeverRounded";
 import RestoreFromTrashOutlinedIcon from "@material-ui/icons/RestoreFromTrashOutlined";
 import { deleteNote, trash } from "./Service";
+import { connect } from "react-redux";
 
+const mapStateToProps = state => {
+  return {
+    view: state.view
+  };
+};
 const OverRidedIconButton = withStyles({
   root: {
     padding: "4.7px"
@@ -47,9 +53,10 @@ class TrashCard extends Component {
   render() {
     return (
       <Paper
-        className="noteService"
+        className={this.props.view?"noteServiceListView":"noteService"}
         onMouseEnter={this.onMouseEnterTrue}
         onMouseLeave={this.onMouseEnterFalse}
+        style={{backgroundColor:this.props.note.color}}
       >
         <div>
           <div className="pin">
@@ -90,4 +97,4 @@ class TrashCard extends Component {
   }
 }
 
-export default TrashCard;
+export default connect(mapStateToProps)(TrashCard);

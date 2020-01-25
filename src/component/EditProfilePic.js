@@ -26,6 +26,8 @@ export default class SimpleDialog extends React.Component {
     formdata.append('file',this.state.uploadedFile,this.state.uploadedFile.name)
     uploadImage(token,formdata).then(Response => {
       console.log(Response);
+      localStorage.removeItem("profilePic");
+     localStorage.setItem("profilePic",Response.data.data);
     });
     this.props.handleClose();
   };

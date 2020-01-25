@@ -1,8 +1,9 @@
-import React from "react";
+import React, { Component, useEffect } from "react";
 import PropTypes from "prop-types";
 import { withStyles } from "@material-ui/core/styles";
 import Avatar from "@material-ui/core/Avatar";
 import Grid from "@material-ui/core/Grid";
+import { getProfilePic } from "./Service";
 
 const styles = {
   bigAvatar: {
@@ -13,7 +14,9 @@ const styles = {
   }
 };
 
+
 function ImageAvatars(props) {
+ 
   let name = localStorage.getItem("name");
   let profilePic = localStorage.getItem("profilePic");
 

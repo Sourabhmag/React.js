@@ -9,15 +9,14 @@ import { IconButton, TextField } from "@material-ui/core";
 import Grid from "@material-ui/core/Grid";
 import { withStyles } from "@material-ui/core/styles";
 import DateFnsUtils from "@date-io/date-fns";
+import { addReminderRedux } from "../Redux/Action";
 import {
   MuiPickersUtilsProvider,
   TimePicker,
   DatePicker
 } from "material-ui-pickers";
 import { addReminder } from "./Service";
-
-const moment = require("moment");
-const mm1 = require("moment-timezone");
+import { connect } from "react-redux";
 
 const OverRidedIconButton = withStyles({
   root: {
@@ -43,6 +42,9 @@ class SimplePopover extends React.Component {
   }
 
   handleClickReminderPopover = event => {
+    // console.log('event in pop',event.nativeEvent.stopImmediatePropagation());
+    event.nativeEvent.stopImmediatePropagation();
+
     this.setState(
       {
         anchorElReminderPopover: event.currentTarget
@@ -76,21 +78,28 @@ class SimplePopover extends React.Component {
   };
   handleSetReminder = () => {
     let date = this.state.selectedDate;
-    let noteId = this.props.note.id;
-    let token = localStorage.getItem("Token");
+    if (this.props.note !== null && this.props.note !== undefined) {
+      let noteId = this.props.note.id;
+      let token = localStorage.getItem("Token");
 
-    addReminder(date, noteId, token)
-      .then(Response => {
-        this.props.handleRefresh();
-      })
-      .catch(err => {
-        this.props.handleRefresh();
-      });
-   
+      addReminder(date, noteId, token)
+        .then(Response => {
+          this.props.handleRefresh();
+        })
+        .catch(err => {
+          this.props.handleRefresh();
+        });
+    } else {
+      // this.props.addReminderRedux(date);
+      this.props.getReminderData(date);
+    }
+
     this.handleCloseReminderPopover();
     this.handleClose();
   };
-  handleClickSetReminder = () => {
+  handleClickSetReminder = event => {
+    event.nativeEvent.stopImmediatePropagation();
+
     let currentDate = this.state.currentDate.toLocaleDateString();
     let selectedDate = this.state.selectedDate.toLocaleDateString();
 
@@ -131,7 +140,7 @@ class SimplePopover extends React.Component {
         <Popover
           id="simple-popper"
           open={open}
-          anchorEl={anchorEl}
+          anchorEl={this.ReminderButtonRef.current}
           onClose={this.handleClose}
           anchorOrigin={{
             vertical: "bottom",
@@ -222,9 +231,23 @@ class SimplePopover extends React.Component {
     );
   }
 }
-
+const mapStateToProps = state => {
+  return {
+    view: state.view,
+    drawerPosition: state.drawerPosition
+  };
+};
+var temp = "";
+const mapDispatchToProps = dispatch => {
+  return {
+    addReminderRedux: () => dispatch(addReminderRedux())
+  };
+};
 SimplePopover.propTypes = {
   classes: PropTypes.object.isRequired
 };
 
-export default withStyles(styles)(SimplePopover);
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(withStyles(styles)(SimplePopover));

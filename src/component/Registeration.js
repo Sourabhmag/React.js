@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Button} from "@material-ui/core";
+import { Button } from "@material-ui/core";
 import "../CssFiles/registration.css";
 import FundooLogo from "../Images/account.svg";
 import InField from "../component/InField";
@@ -209,7 +209,7 @@ class Registeration extends Component {
       });
       this.validateCheckPassword();
     }
-    
+
     let user = this.state.user;
     user.name = this.state.firstName + " " + this.state.lastName;
     user.phoneNo = this.state.phoneNumber;
@@ -232,25 +232,70 @@ class Registeration extends Component {
   };
   render() {
     return (
-      <div className="registerationMain">
-        <div className="registeration">
-          <div style={{ fontSize: "200%" }}>
-            <span style={{ color: "blue" }}>f</span>
-            <span style={{ color: "red" }}>u</span>
-            <span style={{ color: "orange" }}>n</span>
-            <span style={{ color: "blue" }}>d</span>
-            <span style={{ color: "green" }}>o</span>
-            <span style={{ color: "red" }}>o</span>
-          </div>
-          <div className="signIn">
-            <span style={{ color: "Black" }}>Sign up</span>
-          </div>
-          <div>
-            <div className="row">
-              <div className="nameTexts">
+      <div className="registerationOuter">
+        <div className="registerationMain">
+          <div className="registeration">
+            <div style={{ fontSize: "200%" }}>
+              <span style={{ color: "blue" }}>f</span>
+              <span style={{ color: "red" }}>u</span>
+              <span style={{ color: "orange" }}>n</span>
+              <span style={{ color: "blue" }}>d</span>
+              <span style={{ color: "green" }}>o</span>
+              <span style={{ color: "red" }}>o</span>
+            </div>
+            <div className="signIn">
+              <span style={{ color: "Black" }}>Sign up</span>
+            </div>
+            <div>
+              <div className="row">
+                <div className="nameTexts">
+                  <InField
+                    label={"First Name"}
+                    handleChange={this.getFirstName}
+                  />
+                  <div
+                    style={{
+                      fontSize: "100%",
+                      color: "red",
+                      paddingBottom: "5%"
+                    }}
+                  >
+                    {this.state.FnameError}
+                  </div>
+                </div>
+                <div className="nameTexts">
+                  <InField
+                    label={"Last Name"}
+                    handleChange={this.getLastName}
+                  />
+                  <div
+                    style={{
+                      fontSize: "100%",
+                      color: "red",
+                      paddingBottom: "5%"
+                    }}
+                  >
+                    {this.state.LnameError}
+                  </div>
+                </div>
+              </div>
+
+              <div className="email">
+                <InField label={"Email"} handleChange={this.getEmail} />
+                <div
+                  style={{
+                    fontSize: "100%",
+                    color: "red",
+                    paddingBottom: "5%"
+                  }}
+                >
+                  {this.state.emailError}
+                </div>
+              </div>
+              <div className="email">
                 <InField
-                  label={"First Name"}
-                  handleChange={this.getFirstName}
+                  label={"Phone Number"}
+                  handleChange={this.getPhoneNumber}
                 />
                 <div
                   style={{
@@ -259,105 +304,82 @@ class Registeration extends Component {
                     paddingBottom: "5%"
                   }}
                 >
-                  {this.state.FnameError}
+                  {this.state.phoneNoError}
                 </div>
               </div>
-              <div className="nameTexts">
-                <InField label={"Last Name"} handleChange={this.getLastName} />
-                <div
-                  style={{
-                    fontSize: "100%",
-                    color: "red",
-                    paddingBottom: "5%"
-                  }}
-                >
-                  {this.state.LnameError}
+
+              <div className="row">
+                <div className="password">
+                  <PasswordField
+                    label={"Password"}
+                    handleChange={this.getPassword}
+                  />
+                  <div
+                    style={{
+                      fontSize: "100%",
+                      color: "red",
+                      paddingBottom: "5%"
+                    }}
+                  >
+                    {this.state.passwordError}
+                  </div>
+                </div>
+                <div className="password">
+                  <PasswordField
+                    label={"Confirm"}
+                    handleChange={this.getCheckPassword}
+                  />
+                  <div
+                    style={{
+                      fontSize: "100%",
+                      color: "red",
+                      paddingBottom: "5%"
+                    }}
+                  >
+                    {this.state.checkPasswordError}
+                  </div>
                 </div>
               </div>
             </div>
 
-            <div className="email">
-              <InField label={"Email"} handleChange={this.getEmail} />
-              <div
-                style={{ fontSize: "100%", color: "red", paddingBottom: "5%" }}
-              >
-                {this.state.emailError}
-              </div>
-            </div>
-            <div className="email">
-              <InField
-                label={"Phone Number"}
-                handleChange={this.getPhoneNumber}
-              />
-              <div
-                style={{ fontSize: "100%", color: "red", paddingBottom: "5%" }}
-              >
-                {this.state.phoneNoError}
-              </div>
-            </div>
-
-            <div className="row">
-              <div className="password">
-                <PasswordField
-                  label={"Password"}
-                  handleChange={this.getPassword}
-                />
-                <div
-                  style={{
-                    fontSize: "100%",
-                    color: "red",
-                    paddingBottom: "5%"
-                  }}
-                >
-                  {this.state.passwordError}
-                </div>
-              </div>
-              <div className="password">
-                <PasswordField
-                  label={"Confirm"}
-                  handleChange={this.getCheckPassword}
-                />
-                <div
-                  style={{
-                    fontSize: "100%",
-                    color: "red",
-                    paddingBottom: "5%"
-                  }}
-                >
-                  {this.state.checkPasswordError}
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div className="buttonAlignment">
-            <Button
-              variant="contained"
-              color="secondary"
-              className="leftPadding"
-              onClick={this.handleCancel}
-            >
-              Cancel
-            </Button>
-            <Button variant="contained" color="primary" onClick={this.getData}>
-              Register
-            </Button>
-          </div>
-          <div style={{ paddingTop: "4%" }}>
-            <typography>
+            <div className="buttonAlignment">
               <Button
+                variant="contained"
+                color="secondary"
+                className="leftPadding"
                 onClick={this.handleCancel}
-                variant="inherit"
-                color="primary"
               >
-                Already Registered?
+                Cancel
               </Button>
-            </typography>
+              <Button
+                variant="contained"
+                color="primary"
+                onClick={this.getData}
+              >
+                Register
+              </Button>
+            </div>
+            <div style={{ paddingTop: "4%" }}>
+              <typography>
+                <Button
+                  onClick={this.handleCancel}
+                  variant="inherit"
+                  color="primary"
+                >
+                  Already Registered?
+                </Button>
+              </typography>
+            </div>
           </div>
-        </div>
-        <div className="logo">
-          <img src={FundooLogo} width="300px" height="300px" alt={FundooLogo}/>
-          <typography>Hey Fundoo user </typography>
+          <div className="logo">
+            <img
+              src={FundooLogo}
+              width="300px"
+              height="300px"
+              alt={FundooLogo}
+            />
+            <typography>Hey Fundoo user </typography>
+          </div>
         </div>
       </div>
     );

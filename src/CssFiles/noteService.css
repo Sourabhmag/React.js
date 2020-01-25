@@ -29,12 +29,31 @@
   display: flex;
   visibility: visible;
 }
+
+.noteService :hover .buttonsNoteServiceForList {
+  display: flex;
+  visibility: visible;
+}
+
+.noteServiceListView :hover .buttonsNoteServiceForList {
+  display: flex;
+  visibility: visible;
+}
 .pin {
   display: flex;
   width: 210px;
   justify-content: space-between;
   flex-direction: row;
 }
+
+.pinForList {
+  display: flex;
+  width: 585px;
+  justify-content: space-between;
+  flex-direction: row;
+}
+
+
 .titleAndDesc {
   width: 225px;
 }
@@ -52,6 +71,21 @@
   width: 210px;
 }
 
+.buttonsPaperNoteServiceForList {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  width: 350px;
+  flex-direction: row;
+}
+.buttonsNoteServiceForList {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  visibility: hidden;
+  margin-top: 10px;
+  width: 350px;
+}
 .chips {
   display: flex;
   flex-direction: row;

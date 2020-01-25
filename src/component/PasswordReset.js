@@ -52,36 +52,39 @@ class PasswordReset extends Component {
       password: "",
       passwordCheck: ""
     });
+    this.props.history.push("/");
   };
   render() {
     return (
-      <div className="passwordResetBox">
-        <div className="signIn">
-          <span style={{ color: "Black", fontWeight: "bold" }}>
-            Password Reset
-          </span>
-        </div>
+      <div className="mainpasswordResetBox">
+        <div className="passwordResetBox">
+          <div className="signIn">
+            <span style={{ color: "Black", fontWeight: "bold" }}>
+              Password Reset
+            </span>
+          </div>
 
-        <div>
-          <PasswordField label={password} handleChange={this.getPassword} />
-          <PasswordField
-            label={confirm_password}
-            handleChange={this.getPasswordCheck}
-          />
-        </div>
+          <div>
+            <PasswordField label={password} handleChange={this.getPassword} />
+            <PasswordField
+              label={confirm_password}
+              handleChange={this.getPasswordCheck}
+            />
+          </div>
 
-        <div className="buttonAlignment">
-          <Button
-            variant="contained"
-            color="secondary"
-            className="leftPadding"
-            onClick={this.reset}
-          >
-            Cancel
-          </Button>
-          <Button variant="contained" color="primary" onClick={this.getData}>
-            Submit
-          </Button>
+          <div className="buttonAlignment">
+            <Button
+              variant="contained"
+              color="secondary"
+              className="leftPadding"
+              onClick={this.reset}
+            >
+              Cancel
+            </Button>
+            <Button variant="contained" color="primary" onClick={this.getData}>
+              Submit
+            </Button>
+          </div>
         </div>
       </div>
     );

@@ -23,8 +23,17 @@ class Dashboard extends Component {
       reminder: false
     };
   }
-
-  handelNoteClick = () => {
+  handleGrid = isGrid => {
+    this.setState(
+      {
+        grid: isGrid
+      },
+      () => {
+        console.log(this.state.grid);
+      }
+    );
+  };
+  handelNoteClick = isGrid => {
     this.setState({
       allnotes: true,
       archive: false,
@@ -35,11 +44,11 @@ class Dashboard extends Component {
 
     this.props.history.push({
       pathname: "/dashboard/note",
-      state: { array: this.state.array }
+      state: { isGrid: this.state.grid }
     });
   };
 
-  handelArchiveClick = () => {
+  handelArchiveClick = isGrid => {
     this.setState({
       allnotes: false,
       archive: true,
@@ -52,10 +61,10 @@ class Dashboard extends Component {
     );
     this.props.history.push({
       pathname: "/dashboard/archive",
-      state: { array: archiveArray }
+      state: { array: archiveArray, isGrid: this.state.grid }
     });
   };
-  handelTrashClick = event => {
+  handelTrashClick = isGrid => {
     this.setState({
       allnotes: false,
       archive: false,
@@ -63,10 +72,13 @@ class Dashboard extends Component {
       labels: false,
       reminder: false
     });
-    this.props.history.push("/dashboard/trash");
+    this.props.history.push({
+      pathname: "/dashboard/trash",
+      state: { isGrid: this.state.grid }
+    });
   };
 
-  handelReminderClick = () => {
+  handelReminderClick = isGrid => {
     this.setState({
       allnotes: false,
       archive: false,
@@ -74,10 +86,13 @@ class Dashboard extends Component {
       labels: false,
       reminder: true
     });
-    this.props.history.push("/dashboard/reminder")
+    this.props.history.push({
+      pathname: "/dashboard/reminder",
+      state: { isGrid: this.state.grid }
+    });
   };
 
-  handelLabelsClick = labelObject => {
+  handelLabelsClick = (labelObject, isGrid) => {
     this.setState({
       allnotes: false,
       archive: false,
@@ -86,8 +101,8 @@ class Dashboard extends Component {
       reminder: false
     });
     this.props.history.push({
-      pathname: "/dashboard/noteWithLabel/"+labelObject.title,
-      state: { labelObj: labelObject }
+      pathname: "/dashboard/noteWithLabel/" + labelObject.title,
+      state: { labelObj: labelObject, isGrid: this.state.grid }
     });
   };
 
@@ -108,8 +123,6 @@ class Dashboard extends Component {
   };
 
   getAllNotes = () => {
-    console.log("in getAllNotes");
-
     getNotes(localStorage.getItem("Token")).then(Response => {
       this.setState({
         array: Response.data.data
@@ -123,17 +136,16 @@ class Dashboard extends Component {
 
   render() {
     return (
-      <div position="relative">
-        <Appbar
-          props={this.props}
-          array={this.state.array}
-          handelNoteClick={this.handelNoteClick}
-          handelReminderClick={this.handelReminderClick}
-          handelArchiveClick={this.handelArchiveClick}
-          handelTrashClick={this.handelTrashClick}
-          handelLabelsClick={this.handelLabelsClick}
-        />
-      </div>
+      <Appbar
+        props={this.props}
+        array={this.state.array}
+        handelNoteClick={this.handelNoteClick}
+        handelReminderClick={this.handelReminderClick}
+        handelArchiveClick={this.handelArchiveClick}
+        handelTrashClick={this.handelTrashClick}
+        handelLabelsClick={this.handelLabelsClick}
+        handleGrid={this.handleGrid}
+      />
     );
   }
 }

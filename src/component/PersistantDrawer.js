@@ -20,7 +20,20 @@ import EditOutlinedIcon from "@material-ui/icons/EditOutlined";
 import DeleteOutlinedIcon from "@material-ui/icons/DeleteOutlined";
 import { getLabels } from "./Service";
 import EditLabelPopover from "./EditLabelPopover";
+import { drawer_toggle } from "../Redux/Action";
+import { connect } from "react-redux";
+import "../CssFiles/persistantDrawer.css"
+const mapStateToProps = state => {
+  return {
+    drawerPosition: state.drawerPosition
+  };
+};
 
+const mapDispatchToProps = dispatch => {
+  return {
+    drawer_toggle: () => dispatch(drawer_toggle())
+  };
+};
 const drawerWidth = 240;
 
 const styles = theme => ({
@@ -79,11 +92,15 @@ class PersistentDrawerLeft extends React.Component {
   }
 
   handleDrawerOpen = () => {
-    this.setState({ open: true });
+    this.setState({ open: true }, () => {
+      this.props.drawer_toggle();
+    });
   };
 
   handleDrawerClose = () => {
-    this.setState({ open: false });
+    this.setState({ open: false }, () => {
+      this.props.drawer_toggle();
+    });
   };
 
   handleClickOpenEditLabel = () => {
@@ -108,98 +125,80 @@ class PersistentDrawerLeft extends React.Component {
     });
   };
 
- 
   UNSAFE_componentWillMount() {
     this.getAllLabels();
   }
   render() {
     const { classes } = this.props;
     const { open } = this.state;
+    console.log(this.props.drawerPosition);
 
     return (
-      <div>
-        <div className={classes.root}>
-          <CssBaseline />
+      <div className={classes.root}>
+        <CssBaseline />
 
-          <IconButton
-            disableGutters={!open}
-            color="inherit"
-            aria-label="Open drawer"
-            onClick={open ? this.handleDrawerClose : this.handleDrawerOpen}
-          >
-            <MenuIcon />
-          </IconButton>
+        <IconButton
+          disableGutters={!open}
+          color="inherit"
+          aria-label="Open drawer"
+          onClick={open ? this.handleDrawerClose : this.handleDrawerOpen}
+        >
+          <MenuIcon />
+        </IconButton>
 
-          <Drawer
-            className={classes.drawer}
-            variant="persistent"
-            anchor="left"
-            open={open}
-            classes={{
-              paper: classes.drawerPaper
-            }}
-          >
-            <Divider />
-            <div>
-              <List>
+        <Drawer
+          className={classes.drawer}
+          variant="persistent"
+          anchor="left"
+          open={open}
+          classes={{
+            paper: classes.drawerPaper
+          }}
+        >
+          <Divider />
+          <div>
+            <List>
+              <ListItem
+              className="over"
+                button
+                style={{
+                  borderTopRightRadius: "20px",
+                  borderBottomRightRadius: "20px"
+                }}
+                onClick={() => this.props.handelNoteClick(this.props.isGrid)}
+              >
+                <ListItemIcon>
+                  <NoteIcon />
+                </ListItemIcon>
+                <ListItemText primary="Notes" />
+              </ListItem>
+              <ListItem
+              className="over"
+                button
+                style={{
+                  borderTopRightRadius: "20px",
+                  borderBottomRightRadius: "20px"
+                }}
+                onClick={() =>
+                  this.props.handelReminderClick(this.props.isGrid)
+                }
+              >
+                <ListItemIcon>
+                  <ReminderIcon />
+                </ListItemIcon>
+                <ListItemText primary="Reminder" />
+              </ListItem>
+            </List>
+            <Divider></Divider>
+            <Typography style={{ paddingTop: "6%", paddingRight: "65%" }}>
+              Labels
+            </Typography>
+            <List>
+              {this.state.labelArray.map(labelObject => (
                 <ListItem
+                className="over"
                   button
-                  style={{
-                    borderTopRightRadius: "20px",
-                    borderBottomRightRadius: "20px"
-                  }}
-                  onClick={this.props.handelNoteClick}
-                >
-                  <ListItemIcon>
-                    <NoteIcon />
-                  </ListItemIcon>
-                  <ListItemText primary="Notes" />
-                </ListItem>
-                <ListItem
-                  button
-                  style={{
-                    borderTopRightRadius: "20px",
-                    borderBottomRightRadius: "20px"
-                  }}
-                  onClick={this.props.handelReminderClick}
-                >
-                  <ListItemIcon>
-                    <ReminderIcon />
-                  </ListItemIcon>
-                  <ListItemText primary="Reminder" />
-                </ListItem>
-              </List>
-              <Divider></Divider>
-              <Typography style={{ paddingTop: "6%", paddingRight: "65%" }}>
-                Labels
-              </Typography>
-              <List>
-                {this.state.labelArray.map(labelObject => (
-                  <ListItem
-                    button
-                    // key="label"
-                    style={{
-                      borderTopRightRadius: "20px",
-                      borderBottomRightRadius: "20px"
-                    }}
-                  >
-                    <div
-                      style={{
-                        display: "flex",
-                        flexDirection: "row"
-                      }}
-                      onClick={()=>this.props.handelLabelsClick(labelObject)}
-                    >
-                      <ListItemIcon style={{ paddingTop: 3 }}>
-                        <LabelOutlinedIcon />
-                      </ListItemIcon>
-                      <ListItemText primary={labelObject.title} />
-                    </div>
-                  </ListItem>
-                ))}
-
-                <ListItem
-                  button
+                  // key="label"
                   style={{
                     borderTopRightRadius: "20px",
                     borderBottomRightRadius: "20px"
@@ -210,64 +209,93 @@ class PersistentDrawerLeft extends React.Component {
                       display: "flex",
                       flexDirection: "row"
                     }}
-                    onClick={this.handleClickOpenEditLabel}
+                    onClick={() =>
+                      this.props.handelLabelsClick(
+                        labelObject,
+                        this.props.isGrid
+                      )
+                    }
                   >
-                    <ListItemIcon style={{ paddingTop: 4 }}>
-                      <EditOutlinedIcon />
+                    <ListItemIcon style={{ paddingTop: 3 }}>
+                      <LabelOutlinedIcon />
                     </ListItemIcon>
-                    <ListItemText primary="Edit label" />
+                    <ListItemText primary={labelObject.title} />
                   </div>
+                </ListItem>
+              ))}
 
-                  {this.state.openEditLabel ? (
-                    <div>
-                      <EditLabelPopover
-                        getAllLabels={this.getAllLabels}
-                        open={this.state.openEditLabel}
-                        onClose={this.handleCloseEditLabel}
-                      />
-                    </div>
-                  ) : null}
-                </ListItem>
-              </List>
-              <Divider></Divider>
-              <List>
-                <ListItem
-                  button
+              <ListItem
+              className="over"
+                button
+                style={{
+                  borderTopRightRadius: "20px",
+                  borderBottomRightRadius: "20px"
+                }}
+              >
+                <div
                   style={{
-                    borderTopRightRadius: "20px",
-                    borderBottomRightRadius: "20px"
+                    display: "flex",
+                    flexDirection: "row"
                   }}
-                  onClick={this.props.handelArchiveClick}
+                  onClick={this.handleClickOpenEditLabel}
                 >
-                  <ListItemIcon>
-                    <ArchiveOutlinedIcon />
+                  <ListItemIcon style={{ paddingTop: 4 }}>
+                    <EditOutlinedIcon />
                   </ListItemIcon>
-                  <ListItemText primary="Archive" />
-                </ListItem>
-                <ListItem
-                  button
-                  style={{
-                    borderTopRightRadius: "20px",
-                    borderBottomRightRadius: "20px"
-                  }}
-                  onClick={this.props.handelTrashClick}
-                >
-                  <ListItemIcon>
-                    <DeleteOutlinedIcon />
-                  </ListItemIcon>
-                  <ListItemText primary="Trash" />
-                </ListItem>
-              </List>
-            </div>
-          </Drawer>
-          <main
-            className={classNames(classes.content, {
-              [classes.contentShift]: open
-            })}
-          >
-            <div className={classes.drawerHeader} />
-          </main>
-        </div>
+                  <ListItemText primary="Edit label" />
+                </div>
+
+                {this.state.openEditLabel ? (
+                  <div>
+                    <EditLabelPopover
+                      getAllLabels={this.getAllLabels}
+                      open={this.state.openEditLabel}
+                      onClose={this.handleCloseEditLabel}
+                    />
+                  </div>
+                ) : null}
+              </ListItem>
+            </List>
+            <Divider></Divider>
+            <List>
+              <ListItem
+              className="over"
+                button
+                style={{
+                  borderTopRightRadius: "20px",
+                  borderBottomRightRadius: "20px"
+                }}
+                onClick={() => this.props.handelArchiveClick(this.props.isGrid)}
+              >
+                <ListItemIcon>
+                  <ArchiveOutlinedIcon />
+                </ListItemIcon>
+                <ListItemText primary="Archive" />
+              </ListItem>
+              <ListItem
+              className="over"
+                button
+                style={{
+                  borderTopRightRadius: "20px",
+                  borderBottomRightRadius: "20px"
+                }}
+                onClick={() => this.props.handelTrashClick(this.props.isGrid)}
+              >
+                <ListItemIcon>
+                  <DeleteOutlinedIcon />
+                </ListItemIcon>
+                <ListItemText primary="Trash" />
+              </ListItem>
+            </List>
+          </div>
+        </Drawer>
+        <main
+          className={classNames(classes.content, {
+            [classes.contentShift]: open
+          })}
+        >
+          <div className={classes.drawerHeader} />
+        </main>
       </div>
     );
   }
@@ -278,4 +306,7 @@ PersistentDrawerLeft.propTypes = {
   theme: PropTypes.object.isRequired
 };
 
-export default withStyles(styles, { withTheme: true })(PersistentDrawerLeft);
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(withStyles(styles, { withTheme: true })(PersistentDrawerLeft));

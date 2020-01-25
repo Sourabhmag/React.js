@@ -49,12 +49,6 @@ class SimplePopover extends React.Component {
         >
           <ColorLensOutlinedIcon />
         </OverRidedIconButton>
-        {/* <ColorLensOutlinedIcon
-          aria-owns={open ? "simple-popper" : undefined}
-          aria-haspopup="true"
-          variant="contained"
-          onClick={this.handleClick}
-        /> */}
 
         <Popover
           id="simple-popper"
@@ -69,11 +63,18 @@ class SimplePopover extends React.Component {
             vertical: "bottom",
             horizontal: "left"
           }}
+          onClick={event => {
+            event.nativeEvent.stopImmediatePropagation();
+          }}
         >
-          <PickColor
-            note={this.props.note}
-            handleRefresh={this.props.handleRefresh}
-          />
+          {this.props.note !== null && this.props.note !== undefined ? (
+            <PickColor
+              note={this.props.note}
+              handleRefresh={this.props.handleRefresh}
+            />
+          ) : (
+            <PickColor getColorData={this.props.getColorData} />
+          )}
         </Popover>
       </div>
     );

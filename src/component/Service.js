@@ -34,6 +34,15 @@ export function passwordReset(token, password) {
   });
 }
 
+export function getProfilePic(token) {
+  return axios.get("http://localhost:8081/user/getProfilePic", {
+    headers: {
+      "Content-Type": "application/json;charset=utf-8",
+      token: token
+    }
+  });
+}
+
 export function addNote(newNote, token) {
   console.log(`newNote` + JSON.stringify(newNote));
   console.log(`token` + token);
@@ -108,8 +117,6 @@ export function archive(noteId, token) {
 }
 
 export function search(searchKey) {
-  console.log(searchKey);
-
   return axios.post(
     `http://localhost:8082/note/searchByTitle?title=${searchKey}`,
     null,
@@ -122,10 +129,6 @@ export function search(searchKey) {
 }
 
 export function addColor(color, noteId, token) {
-  console.log(
-    `http://localhost:8082/note/addColor?color=${color}&noteId=${noteId}`
-  );
-
   return axios.post(
     `http://localhost:8082/note/addColor`,
     {},
@@ -143,66 +146,66 @@ export function addColor(color, noteId, token) {
 }
 
 export function addReminder(date, noteId, token) {
-  return axios.get(
-    `http://localhost:8082/note/addReminder`,
-    {
-      params: {
-        date: date,
-        noteId: noteId
-      },
-      headers: {
-        "Content-Type": "application/json;charset=utf-8",
-        token: token
-      }
+  return axios.get(`http://localhost:8082/note/addReminder`, {
+    params: {
+      date: date,
+      noteId: noteId
+    },
+    headers: {
+      "Content-Type": "application/json;charset=utf-8",
+      token: token
     }
-  );
+  });
 }
 
 export function deleteReminder(noteId, token) {
-  return axios.get(
-    `http://localhost:8082/note/deleteReminder`,
-    {
-      params: {
-        noteId: noteId
-      },
-      headers: {
-        "Content-Type": "application/json;charset=utf-8",
-        token: token
-      }
+  return axios.get(`http://localhost:8082/note/deleteReminder`, {
+    params: {
+      noteId: noteId
+    },
+    headers: {
+      "Content-Type": "application/json;charset=utf-8",
+      token: token
     }
-  );
+  });
 }
 
-export function addColaborator(noteId,userName, token) {
-  return axios.get(
-    `http://localhost:8082/note/addColaborator`,
-    {
-      params: {
-        noteId: noteId,
-        userName:userName
-      },
-      headers: {
-        "Content-Type": "application/json;charset=utf-8",
-        token: token
-      }
+export function addColaborator(noteId, userName, token) {
+  return axios.post(`http://localhost:8082/note/addColaborator`,userName, {
+    params: {
+      noteId: noteId
+    },
+    headers: {
+      "Content-Type": "application/json;charset=utf-8",
+
+      token: token
     }
-  );
+  });
 }
 
-export function removeColaborator(noteId,userName, token) {
-  return axios.get(
-    `http://localhost:8082/note/removeColaborator`,
-    {
-      params: {
-        noteId: noteId,
-        userName:userName
-      },
-      headers: {
-        "Content-Type": "application/json;charset=utf-8",
-        token: token
-      }
+export function removeColaborator(noteId, userName, token) {
+  return axios.get(`http://localhost:8082/note/removeColaborator`, {
+    params: {
+      noteId: noteId,
+      userName: userName
+    },
+    headers: {
+      "Content-Type": "application/json;charset=utf-8",
+      token: token
     }
-  );
+  });
+}
+
+export function pin(noteId, token) {
+  return axios.get(`http://localhost:8082/note/pin`, {
+    params: {
+      noteId: noteId
+    },
+    headers: {
+      "Content-Type": "application/json;charset=utf-8",
+      token: token
+    }
+  });
 }
 
 export function uploadImage(token, file) {

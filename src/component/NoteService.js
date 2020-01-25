@@ -3,17 +3,19 @@ import { Paper, TextField, Chip } from "@material-ui/core";
 import "../CssFiles/noteService.css";
 import IconButton from "@material-ui/core/IconButton";
 import PropTypes from "prop-types";
-import PersonAddOutlinedIcon from "@material-ui/icons/PersonAddOutlined";
 import ImageOutlinedIcon from "@material-ui/icons/ImageOutlined";
 import ArchiveOutlinedIcon from "@material-ui/icons/ArchiveOutlined";
 import { withStyles } from "@material-ui/styles";
 import Pin from "../Images/pin.svg";
-import KeepLogo from "../Images/keepLogo.png";
+import Unpin from "../Images/pinned.png";
+import moment from 'moment'
 import {
   editNote,
   archive,
   deleteReminder,
-  removeColaborator
+  removeColaborator,
+  pin,
+  deleteNoteFromLabel
 } from "./Service";
 import MorePopover from "./MorePopover";
 import EditNote from "./EditNote";
@@ -21,7 +23,14 @@ import ColorPopover from "./ColorPopover";
 import ReminderPopover from "./ReminderPopover";
 import ClearIcon from "@material-ui/icons/Clear";
 import AddColaboratorDialog from "./AddColaboratorDialog";
+import { connect } from "react-redux";
+import SnackBar from "./SnackBar";
 
+const mapStateToProps = state => {
+  return {
+    view: state.view
+  };
+};
 const OverRidedIconButton = withStyles({
   root: {
     padding: "4.7px"
@@ -41,7 +50,7 @@ const styles = theme => ({
 class NoteService extends Component {
   constructor(props) {
     super(props);
-
+    
     this.state = {
       onMouseEnter: false,
       allNotes: [],
@@ -51,9 +60,26 @@ class NoteService extends Component {
       note: {},
       viewColor: false,
       color: "",
-      fromNotes: false
+      fromNotes: false,
+      openSnackBar: false,
+      messageInfo: "",
+      titleDescChange: false
     };
   }
+
+  handleClickSnackbar = message => {
+    this.setState({
+      openSnackBar: true,
+      messageInfo: message
+    });
+  };
+
+  handleCloseSnackbar = () => {
+    this.setState({
+      openSnackBar: false,
+      messageInfo: ""
+    });
+  };
   onMouseEnterTrue = () => {
     this.setState({ onMouseEnter: true });
   };
@@ -64,13 +90,15 @@ class NoteService extends Component {
 
   handleTitleChange = event => {
     this.setState({
-      title: event.target.value
+      title: event.target.value,
+      titleDescChange: true
     });
   };
 
   handleDescriptionChange = event => {
     this.setState({
-      description: event.target.value
+      description: event.target.value,
+      titleDescChange: true
     });
   };
   handleClickOpen = () => {
@@ -80,24 +108,28 @@ class NoteService extends Component {
   };
   handleClose = value => {
     this.setState({ open: false });
-    console.log(this.state.title);
-    console.log(this.state.description);
 
     let note = this.state.note;
     note.title = this.state.title;
     note.description = this.state.description;
     let noteId = this.props.note.id;
     let token = localStorage.getItem("Token");
-    editNote(noteId, note, token).then(Response => {
-      console.log(Response);
-    });
+    if (this.state.titleDescChange) {
+      editNote(noteId, note, token).then(Response => {
+        console.log(Response);
+        this.setState({
+          titleDescChange: false
+        });
+        this.props.handleRefresh();
+      });
+    }
   };
   handleArchive = () => {
     let noteId = this.props.note.id;
     let token = localStorage.getItem("Token");
     archive(noteId, token).then(Response => {
-      console.log(Response);
-      // if(this.state.fromNotes)
+      let archive = "Note archived";
+      this.handleClickSnackbar(archive);
       this.props.handleRefresh();
     });
   };
@@ -122,6 +154,7 @@ class NoteService extends Component {
     let token = localStorage.getItem("Token");
     deleteReminder(noteId, token)
       .then(Response => {
+        this.handleClickSnackbar("Reminder deleted");
         this.props.handleRefresh();
       })
       .catch(err => {
@@ -134,27 +167,46 @@ class NoteService extends Component {
     let token = localStorage.getItem("Token");
     removeColaborator(noteId, email, token)
       .then(Response => {
-        console.log(Response.data);
+       
         this.props.handleRefresh();
       })
       .catch(err => {
         console.log(err);
       });
   };
+  handleDeleteLabel = label => {
+    let noteId = this.props.note.id;
+    let labelId = label.id;
+    let token = localStorage.getItem("Token");
+    deleteNoteFromLabel(noteId, labelId, token).then(Response => {
+      this.props.handleRefresh();
+    });
+  };
+  handlePin = () => {
+    let noteId = this.props.note.id;
+    let token = localStorage.getItem("Token");
+    pin(noteId, token)
+      .then(Response => {
+        this.handleClickSnackbar("Note pinned");
+        this.props.handleRefresh();
+      })
+      .catch(err => {
+        console.log(err);
+        this.props.handleRefresh();
+      });
+  };
   render() {
-    const { classes } = this.props;
     return (
       <>
-      {/* ,width:this.props.width */}
         <Paper
-          className="noteService"
-          style={{ backgroundColor: this.props.note.color}}
+          className={this.props.view ? "noteServiceListView" : "noteService"}
+          style={{ backgroundColor: this.props.note.color }}
           onMouseEnter={this.onMouseEnterTrue}
           onMouseLeave={this.onMouseEnterFalse}
         >
           <div className="noteService">
             <div className="titleAndDesc">
-              <div className="pin">
+              <div className={this.props.view ? "pinForList" : "pin"}>
                 <div>
                   <TextField
                     multiline
@@ -168,20 +220,39 @@ class NoteService extends Component {
 
                 <div>
                   {this.state.onMouseEnter ? (
-                    <OverRidedIconButton color="default" aria-label="pin">
-                      <img src={Pin} alt={KeepLogo} />
-                    </OverRidedIconButton>
+                    !this.props.note.pin ? (
+                      <OverRidedIconButton
+                        onClick={this.handlePin}
+                        color="default"
+                        aria-label="pin"
+                      >
+                        <img src={Pin} alt={Pin} />
+                      </OverRidedIconButton>
+                    ) : (
+                      <OverRidedIconButton
+                        onClick={this.handlePin}
+                        color="default"
+                        aria-label="pin"
+                      >
+                        <img src={Unpin} alt={Unpin} />
+                      </OverRidedIconButton>
+                    )
                   ) : null}
                 </div>
               </div>
+              
               <TextField
                 multiline
                 disabled
                 InputProps={{ disableUnderline: true }}
                 value={this.props.note.description}
-                style={{ fontSize: 17 }}
+                style={{
+                  fontSize: 17,
+                  width: this.props.view ? "590px" : null
+                }}
                 onClick={this.handleClickOpen}
-              ></TextField>
+              />
+
               <div className="chips">
                 {this.props.note.reminder !== null &&
                 this.props.note.reminder !== undefined ? (
@@ -194,9 +265,9 @@ class NoteService extends Component {
                   >
                     <Chip
                       size="small"
-                      label={this.props.note.reminder}
+                      label={moment(this.props.note.reminder).format('YYYY MMM D, HH:mm A')}
                       style={{
-                        width: "100px"
+                        width: 'fit-content'
                       }}
                       icon={
                         <div className="clearButton">
@@ -241,11 +312,59 @@ class NoteService extends Component {
                       </div>
                     ))
                   : null}
+                {this.props.note.labelList !== null &&
+                this.props.note.labelList !== undefined
+                  ? this.props.note.labelList.map(
+                      label => (
+                        
+                        (
+                          <div
+                            className="hoverChip"
+                            style={{
+                              marginLeft: "5px",
+                              paddingBottom: "8px"
+                            }}
+                          >
+                            <Chip
+                              size="small"
+                              label={label.title}
+                              style={{
+                                width: "95px"
+                              }}
+                              icon={
+                                <div className="clearButton">
+                                  <ClearIcon
+                                    onClick={() =>
+                                      this.handleDeleteLabel(label)
+                                    }
+                                    fontSize="small"
+                                  />
+                                </div>
+                              }
+                              clickable={true}
+                            />
+                          </div>
+                        )
+                      )
+                    )
+                  : null}
               </div>
             </div>
 
-            <div className="buttonsPapernoteService">
-              <div className="buttonsNoteService">
+            <div
+              className={
+                this.props.view
+                  ? "buttonsPaperNoteServiceForList"
+                  : "buttonsPaperNoteService"
+              }
+            >
+              <div
+                className={
+                  this.props.view
+                    ? "buttonsNoteServiceForList"
+                    : "buttonsNoteService"
+                }
+              >
                 <ReminderPopover
                   note={this.props.note}
                   handleRefresh={this.props.handleRefresh}
@@ -271,6 +390,7 @@ class NoteService extends Component {
                 <MorePopover
                   note={this.props.note}
                   handleRefresh={this.props.handleRefresh}
+                  handleClickSnackbar={this.handleClickSnackbar}
                 />
               </div>
             </div>
@@ -283,6 +403,11 @@ class NoteService extends Component {
           handleDescriptionChange={this.handleDescriptionChange}
           note={this.props.note}
         />
+        <SnackBar
+          handleCloseSnackbar={this.handleCloseSnackbar}
+          messageInfo={this.state.messageInfo}
+          openSnackBar={this.state.openSnackBar}
+        />
       </>
     );
   }
@@ -290,4 +415,4 @@ class NoteService extends Component {
 NoteService.propTypes = {
   classes: PropTypes.object.isRequired
 };
-export default NoteService;
+export default connect(mapStateToProps)(NoteService);

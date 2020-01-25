@@ -32,7 +32,8 @@ class SimpleDialog extends React.Component {
 
     this.state = {
       isChange: false,
-      colaborator: ""
+      colaborator: "",
+      colaboratorList: []
     };
   }
 
@@ -41,38 +42,70 @@ class SimpleDialog extends React.Component {
   };
 
   addColaborator = () => {
-    let noteId = this.props.note.id;
     let userName = this.state.colaborator;
-    let token = localStorage.getItem("Token");
-    addColaborator(noteId, userName, token)
-      .then(Response => {
-        console.log(Response);
-        this.setState({
-          colaborator: "",
-          isChange:false
-        });
-        this.props.handleRefresh();
-      })
-      .catch(err => {
-        console.log(err);
+
+    if (this.props.note) {
+      console.log(this.props.note.title);
+
+      this.setState({
+        colaboratorList: this.state.colaboratorList.concat(userName)
       });
+    } else {
+      // this.state.getColaboratorData(userName)
+      this.setState({
+        colaboratorList: this.state.colaboratorList.concat(userName)
+      });
+    }
+  };
+
+  handleListItemClick = value => {
+    this.props.onClose(value);
+    if (this.props.note) {
+      let token = localStorage.getItem("Token");
+      let noteId = this.props.note.id;
+      console.log(this.state.colaboratorList);
+
+      addColaborator(noteId, this.state.colaboratorList, token)
+        .then(Response => {
+          console.log(Response);
+          this.setState({
+            colaborator: "",
+            isChange: false
+          });
+          this.props.handleRefresh();
+        })
+        .catch(err => {
+          console.log(err);
+        });
+    } else {
+      this.props.getColaboratorData(this.state.colaboratorList);
+    }
   };
 
   removeColaborator = email => {
-    let noteId = this.props.note.id;
     let userName = email;
-    let token = localStorage.getItem("Token");
-    removeColaborator(noteId, userName, token)
-      .then(Response => {
-        console.log(Response);
-        this.setState({
-          colaborator: ""
+    if (this.props.note) {
+      let noteId = this.props.note.id;
+      let token = localStorage.getItem("Token");
+      removeColaborator(noteId, userName, token)
+        .then(Response => {
+          console.log(Response);
+          this.setState({
+            colaborator: ""
+          });
+          this.props.handleRefresh();
+        })
+        .catch(err => {
+          console.log(err);
         });
-        this.props.handleRefresh();
-      })
-      .catch(err => {
-        console.log(err);
+    } else {
+      let array = this.state.colaboratorList;
+      var index = array.indexOf(userName);
+      array.splice(index, 1);
+      this.setState({
+        colaboratorList: array
       });
+    }
   };
   handleChange = event => {
     this.setState(
@@ -92,40 +125,63 @@ class SimpleDialog extends React.Component {
       }
     );
   };
-  handleListItemClick = value => {
-    this.props.onClose(value);
-  };
 
   render() {
     const { classes, onClose, selectedValue, ...other } = this.props;
-    console.log(this.props);
 
     return (
       <Dialog
         onClose={this.handleClose}
         aria-labelledby="simple-dialog-title"
         {...other}
+        onClick={event => {
+          event.nativeEvent.stopImmediatePropagation();
+        }}
       >
         <DialogTitle id="simple-dialog-title">Add Colaborator</DialogTitle>
         <div style={{ width: 600 }}>
           <List>
-            {this.props.note.colaborators.map(email => (
-              <ListItem
-                button
-                onClick={() => this.handleListItemClick(email)}
-                key={email}
-              >
-                <ListItemAvatar>
-                  <Avatar className={classes.avatar}>
-                    <PersonIcon />
-                  </Avatar>
-                </ListItemAvatar>
-                <ListItemText primary={email} />
-                <ListItemIcon onClick={() => this.removeColaborator(email)}>
-                  <ClearIcon />
-                </ListItemIcon>
-              </ListItem>
-            ))}
+            {this.props.note !== null && this.props.note !== undefined
+              ? this.state.colaboratorList.map(
+                  email => (
+                    console.log("in colab List"),
+                    (
+                      <ListItem
+                        button
+                        onClick={() => this.handleListItemClick(email)}
+                      >
+                        <ListItemAvatar>
+                          <Avatar className={classes.avatar}>
+                            <PersonIcon />
+                          </Avatar>
+                        </ListItemAvatar>
+                        <ListItemText primary={email} />
+                        <ListItemIcon
+                          onClick={() => this.removeColaborator(email)}
+                        >
+                          <ClearIcon />
+                        </ListItemIcon>
+                      </ListItem>
+                    )
+                  )
+                )
+              : this.state.colaboratorList.map(email => (
+                  <ListItem
+                    button
+                    onClick={() => this.handleListItemClick(email)}
+                  >
+                    <ListItemAvatar>
+                      <Avatar className={classes.avatar}>
+                        <PersonIcon />
+                      </Avatar>
+                    </ListItemAvatar>
+                    <ListItemText primary={email} />
+                    <ListItemIcon onClick={() => this.removeColaborator(email)}>
+                      <ClearIcon />
+                    </ListItemIcon>
+                  </ListItem>
+                ))}
+
             <ListItem button>
               <ListItemAvatar>
                 <Avatar>
@@ -207,13 +263,22 @@ class SimpleDialogDemo extends React.Component {
         >
           <PersonAddOutlinedIcon />
         </OverRidedIconButton>
-        <SimpleDialogWrapped
-          selectedValue={this.state.selectedValue}
-          open={this.state.open}
-          onClose={this.handleClose}
-          note={this.props.note}
-          handleRefresh={this.props.handleRefresh}
-        />
+        {this.props.note ? (
+          <SimpleDialogWrapped
+            selectedValue={this.state.selectedValue}
+            open={this.state.open}
+            onClose={this.handleClose}
+            note={this.props.note}
+            handleRefresh={this.props.handleRefresh}
+          />
+        ) : (
+          <SimpleDialogWrapped
+            selectedValue={this.state.selectedValue}
+            open={this.state.open}
+            onClose={this.handleClose}
+            getColaboratorData={this.props.getColaboratorData}
+          />
+        )}
       </div>
     );
   }

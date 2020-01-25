@@ -14,6 +14,8 @@ import KeepLogo from "../Images/keepLogo.png";
 import { withStyles } from "@material-ui/styles";
 import ProfPopoverButton from "./ProfPopoverButton";
 import { search } from "./Service";
+import { listView, gridView } from "../Redux/Action";
+import { connect } from "react-redux";
 
 const OverridedInputBase = withStyles({
   input: {
@@ -26,37 +28,35 @@ class Appbar extends Component {
     super(props);
 
     this.state = {
-      grid: false,
       searchKey: "",
       searchArray: []
     };
   }
-  handleChangeView = () => {
-    this.setState(state => ({ grid: !state.grid }));
-  };
-  searchAllNotes = () => {
-    search(this.state.searchKey).then(Response => {
-      console.log(Response.data.data);
 
-      this.setState({
-        searchArray: Response.data.data
-      });
-    });
-  };
+  searchAllNotes = () => {};
   handleSearch = event => {
     this.setState(
       {
         searchKey: event.target.value
       },
       () => {
-        this.searchAllNotes();
-        console.log(this.state.searchKey);
+        search(this.state.searchKey).then(Response => {
+          this.setState(
+            {
+              searchArray: Response.data.data
+            },
+            () => {
+              this.props.props.history.push({
+                pathname: "/dashboard/search",
+                state: { searchArray: this.state.searchArray }
+              });
+            }
+          );
+        });
       }
     );
   };
   handleSearchClick = () => {
-    console.log("in handleSearchClick");
-
     this.props.props.history.push({
       pathname: "/dashboard/search",
       state: { searchArray: this.state.searchArray }
@@ -69,27 +69,15 @@ class Appbar extends Component {
           <Toolbar className="appbar">
             <div className="keepAndLogo">
               <div>
-                {!this.state.grid ? (
-                  <PersistantDrawer
-                    array={this.props.array}
-                    handelNoteClick={this.props.handelNoteClick}
-                    handelReminderClick={this.props.handelReminderClick}
-                    handelArchiveClick={this.props.handelArchiveClick}
-                    handelTrashClick={this.props.handelTrashClick}
-                    handelLabelsClick={this.props.handelLabelsClick}
-                    props={this.props}
-                  />
-                ) : (
-                  <PersistantDrawer
-                    array={this.props.array}
-                    handelNoteClick={this.props.handelNoteClick}
-                    handelReminderClick={this.props.handelReminderClick}
-                    handelArchiveClick={this.props.handelArchiveClick}
-                    handelTrashClick={this.props.handelTrashClick}
-                    handelLabelsClick={this.props.handelLabelsClick}
-                    props={this.props}
-                  />
-                )}
+                <PersistantDrawer
+                  array={this.props.array}
+                  handelNoteClick={this.props.handelNoteClick}
+                  handelReminderClick={this.props.handelReminderClick}
+                  handelArchiveClick={this.props.handelArchiveClick}
+                  handelTrashClick={this.props.handelTrashClick}
+                  handelLabelsClick={this.props.handelLabelsClick}
+                  isGrid={this.state.grid}
+                />
               </div>
 
               <div className="logo">
@@ -118,25 +106,29 @@ class Appbar extends Component {
             </div>
 
             <div>
-              <IconButton color="inherit">
-                <Badge color="secondary">
+              <IconButton color="black">
+                <Badge color="black">
                   <RefreshIcon />
                 </Badge>
               </IconButton>
               <IconButton
-                color="inherit"
+                color="black"
                 aria-label="Toggle password visibility"
-                onClick={this.handleChangeView}
+                onClick={() =>
+                  !this.props.view
+                    ? this.props.listView()
+                    : this.props.gridView()
+                }
               >
-                <Badge color="secondary">
-                  {this.state.grid === false ? (
+                <Badge color="black">
+                  {!this.props.view ? (
                     <ViewAgendaOutlinedIcon />
                   ) : (
                     <DashboardOutlinedIcon />
                   )}
                 </Badge>
               </IconButton>
-              <IconButton color="inherit">
+              <IconButton color="black">
                 <SettingsOutlinedIcon />
               </IconButton>
             </div>
@@ -154,4 +146,17 @@ class Appbar extends Component {
   }
 }
 
-export default Appbar;
+const mapStateToProps = state => {
+  return {
+    view: state.view
+  };
+};
+
+const mapDispatchToProps = dispatch => {
+  return {
+    listView: () => dispatch(listView()),
+    gridView: () => dispatch(gridView())
+  };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(Appbar);
